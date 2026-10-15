@@ -1,0 +1,22 @@
+# Dependencias
+node_modules/
+
+# Base de datos local (se genera con database/schema.sql)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Variables de entorno
+.env
+.env.*
+
+# Builds
+dist/
+build/
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,146 @@
+// =====================================================================
+//  Sistema de Gestión de Inventario "Jorge Motors" — Prisma ORM (SQLite)
+//  Espejo de schema.sql. Los nombres en código van en camelCase (como en
+//  InventarioFacade) y se mapean a snake_case en la BD con @map / @@map.
+//
+//  Lo que Prisma NO expresa y vive en la migración SQL (ver README):
+//    - CHECK (stock >= 0, aritmética de movimiento, RUC de 11 dígitos, enums)
+//    - índice único parcial de alerta abierta por producto
+//    - triggers de inmutabilidad y de transición de estados
+//  Los "enums" son String: Zod valida los valores permitidos (RNF-05).
+// =====================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL") // file:./jorge_motors.db
+}
+
+model Usuario {
+  id             Int          @id @default(autoincrement())
+  nombres        String
+  apellidos      String
+  email          String       @unique
+  passwordHash   String       @map("password_hash")
+  rol            String       @default("MECANICO") // ADMINISTRADOR | MECANICO
+  activo         Boolean      @default(true)
+  creadoEn       DateTime     @default(now()) @map("creado_en")
+  actualizadoEn  DateTime     @default(now()) @updatedAt @map("actualizado_en")
+
+  movimientos    Movimiento[]
+
+  @@map("usuario")
+}
+
+model Categoria {
+  id           Int        @id @default(autoincrement())
+  nombre       String     @unique
+  descripcion  String?
+  activo       Boolean    @default(true)
+
+  productos    Producto[]
+
+  @@map("categoria")
+}
+
+model Proveedor {
+  id              Int           @id @default(autoincrement())
+  ruc             String        @unique
+  razonSocial     String        @map("razon_social")
+  contacto        String?
+  telefono        String?
+  email           String?
+  direccion       String?
+  ciudad          String?
+  canalPreferido  String        @default("CORREO") @map("canal_preferido") // CORREO | SMS | WHATSAPP
+  activo          Boolean       @default(true)
+  creadoEn        DateTime      @default(now()) @map("creado_en")
+
+  productos       Producto[]
+  alertas         AlertaStock[]
+
+  @@map("proveedor")
+}
+
+model Producto {
+  id             Int           @id @default(autoincrement())
+  sku            String        @unique
+  nombre         String
+  descripcion    String?
+  marca          String?
+  unidadMedida   String        @default("UNIDAD") @map("unidad_medida")
+  precioCompra   Float         @default(0) @map("precio_compra")
+  precioVenta    Float         @default(0) @map("precio_venta")
+  stockMinimo    Int           @default(0) @map("stock_minimo")
+  categoriaId    Int           @map("categoria_id")
+  proveedorId    Int?          @map("proveedor_id")
+  activo         Boolean       @default(true)
+  creadoEn       DateTime      @default(now()) @map("creado_en")
+  actualizadoEn  DateTime      @default(now()) @updatedAt @map("actualizado_en")
+
+  categoria      Categoria     @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
+  proveedor      Proveedor?    @relation(fields: [proveedorId], references: [id], onDelete: SetNull)
+  stock          Stock?
+  movimientos    Movimiento[]
+  alertas        AlertaStock[]
+
+  @@index([categoriaId], map: "idx_producto_categoria")
+  @@index([proveedorId], map: "idx_producto_proveedor")
+  @@index([nombre], map: "idx_producto_nombre")
+  @@map("producto")
+}
+
+model Stock {
+  id                   Int      @id @default(autoincrement())
+  productoId           Int      @unique @map("producto_id")
+  cantidadActual       Int      @default(0) @map("cantidad_actual")
+  ubicacion            String?
+  ultimaActualizacion  DateTime @default(now()) @map("ultima_actualizacion")
+
+  producto             Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+
+  @@map("stock")
+}
+
+model Movimiento {
+  id               Int      @id @default(autoincrement())
+  productoId       Int      @map("producto_id")
+  usuarioId        Int      @map("usuario_id")
+  tipo             String   // ENTRADA | SALIDA
+  cantidad         Int
+  stockAnterior    Int      @map("stock_anterior")
+  stockResultante  Int      @map("stock_resultante")
+  motivo           String?
+  referencia       String?
+  fecha            DateTime @default(now())
+
+  producto         Producto @relation(fields: [productoId], references: [id], onDelete: Restrict)
+  usuario          Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+
+  @@index([productoId, fecha], map: "idx_movimiento_producto_fecha")
+  @@index([usuarioId], map: "idx_movimiento_usuario")
+  @@index([fecha], map: "idx_movimiento_fecha")
+  @@map("movimiento")
+}
+
+model AlertaStock {
+  id              Int        @id @default(autoincrement())
+  productoId      Int        @map("producto_id")
+  proveedorId     Int?       @map("proveedor_id")
+  stockDetectado  Int        @map("stock_detectado")
+  stockMinimo     Int        @map("stock_minimo")
+  estado          String     @default("PENDIENTE") // PENDIENTE -> ENVIADA -> ATENDIDA
+  canal           String?    // estrategia usada: CORREO | SMS | WHATSAPP
+  fechaGenerada   DateTime   @default(now()) @map("fecha_generada")
+  fechaEnviada    DateTime?  @map("fecha_enviada")
+  fechaAtendida   DateTime?  @map("fecha_atendida")
+
+  producto        Producto   @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  proveedor       Proveedor? @relation(fields: [proveedorId], references: [id], onDelete: SetNull)
+
+  @@index([estado], map: "idx_alerta_estado")
+  @@map("alerta_stock")
+}
