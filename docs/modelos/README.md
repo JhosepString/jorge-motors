@@ -2,8 +2,10 @@
 
 | Archivo | Modelo | Herramienta |
 | --- | --- | --- |
-| `modelo_conceptual_lucidchart.png` | Conceptual (notación de Chen) | Lucidchart |
-| `modelo_logico_lucidchart.png` | Lógico relacional (PK, FK y cardinalidades) | Lucidchart |
-| `modelo_fisico_dbeaver.png` | Físico en SQLite 3 (tablas, relaciones y vistas) | DBeaver |
+| `modelo_conceptual` | Conceptual (notación de Chen): 12 entidades y 15 relaciones | draw.io |
+| `modelo_logico` | Lógico relacional (PK, FK, UQ y cardinalidades en pata de gallo) | draw.io |
+| `modelo_fisico` | Físico en SQL Server / Azure SQL: tipos, CHECK, índices y triggers | draw.io |
 
-Para actualizar un modelo, expórtalo desde Lucidchart como PNG (Archivo → Descargar como → PNG) y reemplaza el archivo con el mismo nombre.
+Los tres se elaboraron a partir de las migraciones `database/azure-sql/migrations/001` a `008` (esquema `jm`). Si se agrega una migración, actualiza el `.drawio` y exporta el PNG con el mismo nombre.
+
+Los modelos del Avance 2 (Lucidchart y DBeaver sobre SQLite) correspondían al diseño inicial de 7 tablas y fueron reemplazados.
