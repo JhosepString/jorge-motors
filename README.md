@@ -14,6 +14,8 @@ Docente: Mg. Luis Enrique Ramírez Pacheco.
 
 ## Arquitectura
 
+La arquitectura objetivo acordada para el desarrollo en Azure, los patrones y la organización de las entregas se describen en el [informe para el equipo](docs/informe/Arquitectura_Objetivo_Jorge_Motors_Equipo.md). Las tecnologías del Avance 2 que figuran más abajo se conservan como antecedente histórico.
+
 - **Estilo:** monolito modular con arquitectura en capas (presentación → negocio → datos).
 - **Modelado:** modelo C4 en cuatro niveles (contexto, contenedores, componentes y código).
 - **Patrones GoF:** Singleton, Facade, Observer, Strategy, State y Chain of Responsibility.
@@ -57,6 +59,8 @@ jorge-motors/
 ```
 
 ## Estado del avance
+
+El cuadro siguiente corresponde a la planificación original del Avance 2. La implementación actual se sigue por entregas verificables en [la bitácora](docs/avance-implementacion.md). La Parte 1 incorpora la base HTTP del backend. Azure SQL y Entra ID son las decisiones objetivo del demo; las referencias a SQLite/PostgreSQL y bcrypt de este documento describen el diseño anterior y se actualizarán al integrar esas partes.
 
 | Fase | Periodo | Estado |
 | --- | --- | --- |

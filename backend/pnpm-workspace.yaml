@@ -1,0 +1,3 @@
+allowBuilds:
+  # tsx utiliza el binario de esbuild para ejecutar TypeScript en desarrollo.
+  esbuild: true

@@ -10,10 +10,13 @@ node_modules/
 # Variables de entorno
 .env
 .env.*
+!.env.example
 
 # Builds
 dist/
 build/
+coverage/
+*.tsbuildinfo
 
 # Sistema y editores
 .DS_Store
