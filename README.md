@@ -18,7 +18,7 @@ La arquitectura objetivo acordada para el desarrollo en Azure, los patrones y la
 
 Implementación actual: backend de inventario, Entra, auditoría, alertas/Outbox, catálogo, proveedores, facturas/adjuntos y reportes PDF/Excel; frontend React con navegación por rol y flujos conectados al contrato REST. SQL Server local mediante `node-mssql`; Azure SQL sigue como destino. La [bitácora](docs/avance-implementacion.md) distingue implementación local, pruebas ficticias, identidad real y despliegues pendientes.
 
-Para usar la interfaz: [guía de la Parte 6](docs/parte-06-frontend.md). El registro SPA de Entra y la demostración de ambos roles en el navegador requieren configuración manual del responsable. [Docker y CI](docs/parte-07-docker-ci.md) están preparados, no se consideran ejecutados ni desplegados. El entorno Azure no se modifica automáticamente.
+Para usar la interfaz: [guía de la Parte 6](docs/parte-06-frontend.md). El registro SPA de Entra y la demostración de ambos roles en el navegador requieren configuración manual del responsable. [Docker y CI](docs/parte-07-docker-ci.md) están preparados, no se consideran ejecutados ni desplegados. El adaptador Entra para Azure SQL también está preparado; su [configuración y comprobación cloud](docs/parte-08-azure-sql.md) siguen pendientes. El entorno Azure no se modifica automáticamente.
 
 La [Parte 3: identidad y auditoría](docs/parte-03-identidad-auditoria.md) añade endpoints protegidos y auditoría transaccional. Su código se verifica localmente; completar los registros de Entra y comprobar el tenant real requiere la configuración manual del usuario.
 

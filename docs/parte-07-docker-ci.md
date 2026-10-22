@@ -42,7 +42,7 @@ El futuro paso de publicación se diseñará por separado, iniciado manualmente 
 ## Bloqueos antes del despliegue Azure
 
 - Configuración SPA y prueba real de la Parte 6.
-- Autenticación de SQL por identidad administrada todavía pendiente; el adaptador actual `SQL_DRIVER=sql` exige SQL_USER/SQL_PASSWORD. No se declara resuelto con asignar un rol Azure.
+- El adaptador `SQL_DRIVER=entra` está implementado y probado por configuración, pero todavía falta crear Azure SQL, activar la identidad administrada, crear el usuario contenido en la base y probar la conexión real. Véase [Parte 8.1](parte-08-azure-sql.md). Asignar únicamente un rol Azure al recurso no completa ese acceso.
 - Blob privado, autorización de documentos y análisis de archivos pendientes. En producción el Adapter local de adjuntos falla cerrado (503), por lo que no debe presentarse esa función como lista para la nube.
 - Correo real/destinatarios y Job cloud, observabilidad, backups/restauración, política de red y prueba de recuperación pendientes.
 - Construcción local/runner de la imagen, análisis de vulnerabilidades del sistema base y prueba de funcionamiento, no solo del Dockerfile.

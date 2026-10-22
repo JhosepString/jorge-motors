@@ -5,7 +5,7 @@ export type SqlDriver = typeof sql;
 export interface SqlConnection { driver: SqlDriver; pool: sql.ConnectionPool }
 type Connector = (settings: SqlSettings) => Promise<SqlConnection>;
 
-export function sqlPoolLimit(driver: 'windows' | 'sql', configuredWorkers?: string): number {
+export function sqlPoolLimit(driver: SqlSettings['SQL_DRIVER'], configuredWorkers?: string): number {
   if (driver !== 'windows') return 5;
   const workers = configuredWorkers && /^[1-9][0-9]{0,3}$/.test(configuredWorkers) ? Number(configuredWorkers) : 4;
   // ODBC usa trabajadores nativos: dejar margen para que el dueño de un lock
@@ -13,13 +13,11 @@ export function sqlPoolLimit(driver: 'windows' | 'sql', configuredWorkers?: stri
   return Math.max(1, Math.min(3, workers - 1));
 }
 
-export async function connectSql(settings: SqlSettings): Promise<SqlConnection> {
-  // El driver nativo solo se carga para Windows local. En Linux se usa Tedious.
-  const driverModule = settings.SQL_DRIVER === 'windows' ? 'mssql/msnodesqlv8.js' : 'mssql';
-  const driver = (await import(driverModule)).default as SqlDriver;
+export function sqlConnectionConfig(settings: SqlSettings): sql.config & { connectionString?: string } {
   const config: sql.config & { connectionString?: string } = {
     server: settings.SQL_SERVER,
     database: settings.SQL_DATABASE,
+    ...(settings.SQL_DRIVER === 'entra' ? { port: 1433 } : {}),
     pool: { min: 0, max: sqlPoolLimit(settings.SQL_DRIVER, process.env.UV_THREADPOOL_SIZE), idleTimeoutMillis: 10_000 },
     connectionTimeout: 10_000,
     requestTimeout: 15_000,
@@ -31,10 +29,25 @@ export async function connectSql(settings: SqlSettings): Promise<SqlConnection> 
       ? 'lpc:localhost' : settings.SQL_SERVER;
     config.connectionString = `Driver={ODBC Driver 18 for SQL Server};Server=${server};Database=${settings.SQL_DATABASE};Trusted_Connection=Yes;Encrypt=Yes;TrustServerCertificate=${settings.SQL_TRUST_CERTIFICATE === 'true' ? 'Yes' : 'No'};`;
     Object.assign(config.options!, { trustedConnection: true });
-  } else {
+  } else if (settings.SQL_DRIVER === 'sql') {
     config.user = settings.SQL_USER!;
     config.password = settings.SQL_PASSWORD!;
+  } else {
+    // Tedious obtiene y renueva el token mediante Azure Identity. Solo se
+    // indica clientId para una identidad asignada por el usuario.
+    config.authentication = {
+      type: 'azure-active-directory-default',
+      options: settings.SQL_ENTRA_CLIENT_ID ? { clientId: settings.SQL_ENTRA_CLIENT_ID } : {},
+    };
   }
+  return config;
+}
+
+export async function connectSql(settings: SqlSettings): Promise<SqlConnection> {
+  // El driver nativo solo se carga para Windows local. En Linux se usa Tedious.
+  const driverModule = settings.SQL_DRIVER === 'windows' ? 'mssql/msnodesqlv8.js' : 'mssql';
+  const driver = (await import(driverModule)).default as SqlDriver;
+  const config = sqlConnectionConfig(settings);
   const pool = new driver.ConnectionPool(config);
   // El evento error debe estar atendido para evitar errores no controlados del pool.
   pool.on('error', () => { console.error(JSON.stringify({ level: 'error', event: 'sql_pool_error' })); });

@@ -4,7 +4,7 @@ import { afterEach, test } from 'node:test';
 import { calcularStock, MAX_STOCK } from '../src/modules/inventario/domain/stock.js';
 import { InventarioFacade } from '../src/modules/inventario/application/inventario.facade.js';
 import type { InventoryUnitOfWork } from '../src/modules/inventario/application/contracts.js';
-import { SqlPoolSingleton, type SqlConnection } from '../src/infrastructure/database/sql-pool.js';
+import { SqlPoolSingleton, sqlConnectionConfig, type SqlConnection } from '../src/infrastructure/database/sql-pool.js';
 import { parseSqlSettings } from '../src/infrastructure/database/sql-settings.js';
 import { inventoryEvents } from '../src/infrastructure/inventory-events.js';
 
@@ -61,4 +61,29 @@ test('Singleton permite reintentar una conexión fallida', async () => {
 
 test('no se permite desactivar validación de certificados para un servidor remoto', () => {
   assert.throws(() => parseSqlSettings({ SQL_SERVER: 'remoto.database.windows.net', SQL_TRUST_CERTIFICATE: 'true' }));
+});
+
+test('Azure SQL usa Entra sin usuario ni contraseña y con TLS verificado', () => {
+  const base = { SQL_DRIVER: 'entra', SQL_SERVER: 'jorge-demo.database.windows.net', SQL_DATABASE: 'jorge_motors' };
+  const system = sqlConnectionConfig(parseSqlSettings(base));
+  assert.deepEqual(system.authentication, { type: 'azure-active-directory-default', options: {} });
+  assert.equal(system.port, 1433);
+  assert.equal(system.options?.encrypt, true);
+  assert.equal(system.options?.trustServerCertificate, false);
+  assert.equal(system.user, undefined);
+  assert.equal(system.password, undefined);
+
+  const clientId = randomUUID();
+  const assigned = sqlConnectionConfig(parseSqlSettings({ ...base, SQL_ENTRA_CLIENT_ID: clientId }));
+  assert.deepEqual(assigned.authentication, {
+    type: 'azure-active-directory-default', options: { clientId },
+  });
+});
+
+test('Azure SQL rechaza servidor ajeno, credenciales SQL y certificado no validado', () => {
+  const base = { SQL_DRIVER: 'entra', SQL_SERVER: 'jorge-demo.database.windows.net', SQL_DATABASE: 'jorge_motors' };
+  assert.throws(() => parseSqlSettings({ ...base, SQL_SERVER: 'localhost' }));
+  assert.throws(() => parseSqlSettings({ ...base, SQL_USER: 'sa', SQL_PASSWORD: 'demo' }));
+  assert.throws(() => parseSqlSettings({ ...base, SQL_TRUST_CERTIFICATE: 'true' }));
+  assert.throws(() => parseSqlSettings({ ...base, SQL_ENTRA_CLIENT_ID: 'no-es-uuid' }));
 });

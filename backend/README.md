@@ -28,7 +28,7 @@ Resultado: `status: ok`, `service: jorge-motors-api`. El endpoint es público y 
 pnpm check
 ```
 
-Ejecuta el chequeo de tipos, las pruebas HTTP y la compilación. Para ejecutar lo compilado: `pnpm start`. Detén el servidor con Ctrl+C. En desarrollo escucha en `127.0.0.1`. Al preparar Docker configuraremos `HOST=0.0.0.0` explícitamente.
+Ejecuta el chequeo de tipos, las pruebas HTTP y la compilación. Para ejecutar lo compilado: `pnpm start`. Detén el servidor con Ctrl+C. En desarrollo escucha en `127.0.0.1`. El Dockerfile preparado configura `HOST=0.0.0.0` para el contenedor.
 
 ## Estructura actual
 
@@ -100,13 +100,13 @@ La [guía de adjuntos](../docs/parte-05-2c-adjuntos.md) explica subida/listado/d
 
 ## Parte 5.3: reportes de inventario y Strategy
 
-La [guía de reportes](../docs/parte-05-3-reportes.md) documenta GET `/api/v1/reportes/inventario` (JSON) y `/api/v1/reportes/inventario/exportar?formato=pdf|xlsx`, solo Administrador, con filtros y auditoría. **Strategy implementado**: PDF/Excel consumen el mismo conjunto autorizado. Máximo 1000 productos, 10 MiB y dos exportaciones en curso por instancia; no se trunca ni se redondean precios incompatibles con Excel. `pnpm.cmd report:check pdf` o `xlsx` descarga con PKCE en `.local-data/reportes/` sin sobrescribir archivos. No requiere nuevas migraciones. PDFKit/ExcelJS y fuente Noto Sans son dependencias desplegables; el backend no depende de Office/Codex. Correo, Blob y frontend mantienen su etapa pendiente.
+La [guía de reportes](../docs/parte-05-3-reportes.md) documenta GET `/api/v1/reportes/inventario` (JSON) y `/api/v1/reportes/inventario/exportar?formato=pdf|xlsx`, solo Administrador, con filtros y auditoría. **Strategy implementado**: PDF/Excel consumen el mismo conjunto autorizado. Máximo 1000 productos, 10 MiB y dos exportaciones en curso por instancia; no se trunca ni se redondean precios incompatibles con Excel. `pnpm.cmd report:check pdf` o `xlsx` descarga con PKCE en `.local-data/reportes/` sin sobrescribir archivos. No requiere nuevas migraciones. PDFKit/ExcelJS y fuente Noto Sans son dependencias desplegables; el backend no depende de Office/Codex. Correo y Blob mantienen su etapa pendiente. La interfaz está implementada localmente; su registro SPA y la prueba con usuarios reales en navegador siguen pendientes.
 
 ## Parte 6.1: consultas para la interfaz
 
 `GET /api/v1/inventario/stock`, `/categorias` y `/movimientos`: Administrador/Mecánico activos, campos públicos sin precios, filtros estrictos, paginación acotada y auditoría. El Mecánico siempre recibe solo sus propios movimientos. No se abrió el catálogo administrativo al Mecánico ni se aceptan IDs de actor desde el cliente. La [guía frontend](../docs/parte-06-frontend.md) documenta la SPA y la configuración manual del nuevo cliente Entra; agregarlo a ENTRA_ALLOWED_CLIENT_IDS sin quitar el cliente de escritorio. No hay migraciones nuevas.
 
-`Dockerfile` con contexto en la raíz del proyecto y workflow manual preparados: ver [Parte 7](../docs/parte-07-docker-ci.md). Construcción de imagen, ejecución del workflow y despliegue Azure todavía no verificados. Los adjuntos locales siguen fallando cerrados en producción y la autenticación SQL por identidad administrada sigue pendiente.
+`Dockerfile` con contexto en la raíz del proyecto y workflow manual preparados: ver [Parte 7](../docs/parte-07-docker-ci.md). Construcción de imagen, ejecución del workflow y despliegue Azure todavía no verificados. Los adjuntos locales siguen fallando cerrados en producción. `SQL_DRIVER=entra` prepara la conexión sin contraseña mediante identidad administrada; sus recursos, permisos y prueba real en Azure siguen pendientes según la [Parte 8.1](../docs/parte-08-azure-sql.md).
 
 ## Patrón aplicado: Chain of Responsibility
 
