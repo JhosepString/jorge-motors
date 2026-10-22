@@ -1,0 +1,8 @@
+allowBuilds:
+  # tsx utiliza el binario de esbuild para ejecutar TypeScript en desarrollo.
+  esbuild: true
+  # Driver opcional de autenticación Windows para las pruebas SQL locales.
+  msnodesqlv8: true
+overrides:
+  # ExcelJS usa únicamente uuid.v4; conservar CommonJS con versión corregida.
+  'exceljs>uuid': 11.1.1

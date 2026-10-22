@@ -1,0 +1,9 @@
+{
+  "proveedorId": 1,
+  "numero": "DEMO-F001-000001",
+  "fecha": "2026-10-21",
+  "moneda": "PEN",
+  "lineas": [
+    { "productoId": 1, "cantidad": 2, "precioUnitario": "20.00" }
+  ]
+}

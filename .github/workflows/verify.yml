@@ -1,0 +1,69 @@
+name: Verificación manual Jorge Motors
+
+# Preparado para que el responsable lo ejecute en GitHub. No se publica ni despliega.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  code:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6, verificado 21/10/2026
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+        with:
+          version: '11.25.0'
+          run_install: false
+      - name: Dependencias y comprobaciones backend (sin SQL real)
+        working-directory: backend
+        run: |
+          pnpm install --frozen-lockfile --ignore-scripts
+          pnpm check
+          pnpm audit --prod
+      - name: Dependencias y comprobaciones frontend
+        working-directory: frontend
+        run: |
+          pnpm install --frozen-lockfile --ignore-scripts
+          pnpm check
+          pnpm audit --prod
+          pnpm validate:workflow
+      - name: Navegador aislado y accesibilidad
+        working-directory: frontend
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          pnpm test:e2e
+
+  image:
+    needs: code
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Construir imagen local al runner
+        run: docker build --file backend/Dockerfile --tag jorge-motors-api:check .
+      - name: Verificar arranque sin credenciales ni conexión SQL
+        run: |
+          docker run --detach --name jm-api-check --publish 127.0.0.1:3100:3000 jorge-motors-api:check
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:3100/api/v1/health; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - name: Limpiar contenedor temporal del runner
+        if: always()
+        run: docker rm --force jm-api-check || true
