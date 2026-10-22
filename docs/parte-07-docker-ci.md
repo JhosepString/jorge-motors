@@ -1,6 +1,12 @@
 # Parte 7 — Docker y verificación CI (preparación)
 
-**Archivos preparados; imagen y workflow aún no ejecutados.** El daemon de Docker Desktop no estaba disponible durante la comprobación local. No se inició Docker/WSL, no se publicó código, no se ejecutó GitHub Actions ni se modificó Azure. No se considera cerrada la Parte 7 por escribir estos archivos.
+**Estado inicial de esta guía:** los archivos estaban preparados, pero la imagen y el workflow no se habían ejecutado porque Docker Desktop no estaba disponible. La verificación posterior de la imagen se registra abajo. El workflow sigue sin ejecutarse en GitHub; no se publicó código ni se modificó Azure. No se considera cerrada la Parte 7 por escribir estos archivos.
+
+## Verificación posterior de la imagen local
+
+El responsable ejecutó `docker build --file backend/Dockerfile --tag jorge-motors-api:demo .` desde la raíz del repositorio; BuildKit completó 20/20 etapas sin error. A continuación se arrancó la imagen en `127.0.0.1:3100`, se obtuvo `{"status":"ok","service":"jorge-motors-api"}` de `/api/v1/health` y se comprobó que el proceso corre como `uid=1000(node)`, no como root. El contenedor temporal se detuvo y eliminó mediante `--rm`; la imagen local permanece.
+
+Esto cierra la **construcción y prueba HTTP básica de Docker**, no la Parte 7 completa: el workflow aún no se ha ejecutado en GitHub y no se han comprobado Entra, SQL ni Blob dentro del contenedor. No se publicó la imagen ni se desplegó Azure.
 
 ## Qué se empaqueta
 
@@ -43,7 +49,7 @@ El futuro paso de publicación se diseñará por separado, iniciado manualmente 
 
 - Configuración SPA y prueba real de la Parte 6.
 - El adaptador `SQL_DRIVER=entra` está implementado y probado por configuración, pero todavía falta crear Azure SQL, activar la identidad administrada, crear el usuario contenido en la base y probar la conexión real. Véase [Parte 8.1](parte-08-azure-sql.md). Asignar únicamente un rol Azure al recurso no completa ese acceso.
-- Blob privado, autorización de documentos y análisis de archivos pendientes. En producción el Adapter local de adjuntos falla cerrado (503), por lo que no debe presentarse esa función como lista para la nube.
+- El Adapter Blob privado está preparado con identidad administrada y la autorización de documentos ya existe en la API, pero faltan asignación RBAC, prueba contra Azure, limpieza de pendientes cloud y análisis de malware. En producción el Adapter local falla cerrado (503); tampoco debe presentarse Blob como funcionalidad cloud validada. Véase [Parte 8.2](parte-08-2-blob.md).
 - Correo real/destinatarios y Job cloud, observabilidad, backups/restauración, política de red y prueba de recuperación pendientes.
 - Construcción local/runner de la imagen, análisis de vulnerabilidades del sistema base y prueba de funcionamiento, no solo del Dockerfile.
 

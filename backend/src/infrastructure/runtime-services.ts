@@ -17,6 +17,8 @@ import { SqlInvoiceUnitOfWork } from './database/sql-invoices.js';
 import { AdjuntosFacade } from '../modules/compras/application/adjuntos.facade.js';
 import { SqlAttachmentUnitOfWork } from './database/sql-attachments.js';
 import { LocalAttachmentStore } from './storage/local-attachment-store.js';
+import { managedBlobStore, parseBlobSettings } from './storage/blob-attachment-store.js';
+import type { AttachmentStore } from '../modules/compras/application/attachment-contracts.js';
 import { ReportesFacade } from '../modules/reportes/application/inventory-report.js';
 import { SqlReportUnitOfWork } from './database/sql-reports.js';
 import { ExcelInventoryStrategy, PdfInventoryStrategy } from '../modules/reportes/infrastructure/report-strategies.js';
@@ -26,6 +28,19 @@ import { SqlInventoryReadUnitOfWork } from './database/sql-inventory-read.js';
 // Composición: ninguna conexión SQL ni consulta a Entra ocurre al crear los servicios.
 export function runtimeServices(env: NodeJS.ProcessEnv): BackendServices {
   const entra = parseEntraSettings(env);
+  let attachmentStore: AttachmentStore | undefined;
+  const getAttachmentStore = (): AttachmentStore => {
+    if (attachmentStore) return attachmentStore;
+    if (env.ATTACHMENT_STORAGE === 'blob') {
+      try { attachmentStore = managedBlobStore(parseBlobSettings(env)); }
+      catch { throw new AppError(503, 'ATTACHMENT_STORAGE_NOT_CONFIGURED', 'Configure el almacenamiento privado de adjuntos.'); }
+    } else if (env.NODE_ENV !== 'production' && (!env.ATTACHMENT_STORAGE || env.ATTACHMENT_STORAGE === 'local')) {
+      attachmentStore = new LocalAttachmentStore(env.ATTACHMENT_LOCAL_ROOT);
+    } else {
+      throw new AppError(503, 'ATTACHMENT_STORAGE_NOT_CONFIGURED', 'Configure el almacenamiento privado de adjuntos.');
+    }
+    return attachmentStore;
+  };
   const getConnection = async () => {
     if (!env.SQL_DATABASE) throw new AppError(503, 'DATABASE_NOT_CONFIGURED', 'Configure la base de datos de la aplicación.');
     try {
@@ -69,8 +84,8 @@ export function runtimeServices(env: NodeJS.ProcessEnv): BackendServices {
       return new FacturasFacade(new SqlInvoiceUnitOfWork(await getConnection()), inventoryEvents());
     },
     async attachments() {
-      if (env.NODE_ENV === 'production') throw new AppError(503, 'ATTACHMENT_STORAGE_NOT_CONFIGURED', 'Configure el adaptador privado de producción antes de habilitar adjuntos.');
-      return new AdjuntosFacade(new SqlAttachmentUnitOfWork(await getConnection()), new LocalAttachmentStore(env.ATTACHMENT_LOCAL_ROOT));
+      const store = getAttachmentStore();
+      return new AdjuntosFacade(new SqlAttachmentUnitOfWork(await getConnection()), store);
     },
     async reports() { return new ReportesFacade(new SqlReportUnitOfWork(await getConnection()), {
       pdf: new PdfInventoryStrategy(), xlsx: new ExcelInventoryStrategy(),

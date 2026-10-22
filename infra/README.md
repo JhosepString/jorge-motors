@@ -63,4 +63,4 @@ Después, en Azure Portal, abre `rg-jorge-motors-dev` y valida:
 
 ## Importante
 
-No guardes claves, cadenas de conexión ni archivos `.env` en Git. La siguiente fase agregará Azure SQL y una identidad administrada cuando ya exista la API que las utilice.
+No guardes claves, cadenas de conexión ni archivos `.env` en Git. El código de Azure SQL y Blob ya está preparado, pero estos recursos, permisos y conexiones no se han desplegado ni validado en Azure. Sigue las guías [SQL](../docs/parte-08-azure-sql.md) y [Blob](../docs/parte-08-2-blob.md) cuando quieras configurarlos manualmente.

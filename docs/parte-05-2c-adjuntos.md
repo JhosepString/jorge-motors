@@ -19,7 +19,7 @@ Cada factura admite cinco adjuntos activos o pendientes. Solo se limpia una carg
 | Repository / UoW | SQL guarda metadatos, claves de reintento y estados; cada fase tiene su transacción. |
 | Chain of Responsibility | Token → perfil → Administrador → cabeceras/límite de concurrencia → parser binario acotado → caso de uso. |
 
-Se reutiliza el pool Singleton. No se agrega un GoF nuevo para cada tabla/estado. Observer y State de alertas no se disparan por adjuntar archivos: no hay cambios de existencias. El adaptador Azure Blob **no está implementado ni configurado** en esta entrega.
+Se reutiliza el pool Singleton. No se agrega un GoF nuevo para cada tabla/estado. Observer y State de alertas no se disparan por adjuntar archivos: no hay cambios de existencias. El Adapter Azure Blob ya está implementado y probado con un contenedor simulado; **no se ha conectado ni probado con Azure real**. Véase [Parte 8.2](parte-08-2-blob.md).
 
 ## Persistencia y recuperación
 
@@ -34,7 +34,7 @@ Estados: `PENDIENTE → LISTO` o `PENDIENTE → ELIMINADO`. La trazabilidad no s
 
 **SQL y el disco no son una transacción distribuida.** Si se escribió el archivo y después falla la confirmación SQL, no se afirma éxito: queda `PENDIENTE`. Repetir con la misma clave/contenido puede recuperar un objeto completo; una escritura parcial/incompatible queda pendiente para limpieza, sin sobreescribirla silenciosamente. El registro se crea antes de cualquier escritura y permite encontrar el archivo de la carga interrumpida.
 
-Para este adaptador local acotado, la segunda transacción conserva el bloqueo durante la E/S. El limpiador usa el mismo bloqueo por UUID: revalida el estado y no puede borrar a la vez que se confirma una carga. Es una decisión explícita de demo local, con costo en conexiones/latencia si el disco se demora. No es una recomendación de mantener transacciones SQL abiertas ante cualquier operación remota larga. Antes de habilitar Blob se deberán revisar tiempos, cancelación y reservas con fencing si se mueve la E/S fuera del bloqueo; conservar el contrato de negocio no elimina ese trabajo de integración.
+La segunda transacción conserva el bloqueo durante la E/S tanto con disco como con Blob. El limpiador local usa el mismo bloqueo por UUID: revalida el estado y no puede borrar a la vez que se confirma una carga. Es una decisión explícita para el demo acotado, con costo en conexiones/latencia si el almacenamiento se demora. El Adapter Blob impone límites de tiempo, pero **no elimina la transacción SQL abierta durante una operación de red**. Antes de uso empresarial se deben diseñar reserva/finalización sin bloqueo remoto prolongado y recuperación con fencing.
 
 Las reservas vencen a los 30 minutos según el reloj SQL, con la misma precisión `datetime2(3)`. Una carga caducada no puede finalizar; su clave no vuelve a usarse después de limpiar. Para reenviar el documento, limpiar primero y usar una clave nueva. No se prolonga la fecha con reintentos indefinidos.
 
@@ -64,7 +64,7 @@ Por defecto se usa `backend/.local-data/attachments`, excluido de Git y sin ruta
 
 La protección frente a otras personas con acceso al equipo depende también de los permisos del sistema de archivos: en Windows se deben revisar los ACL heredados. No ubicar la raíz en carpetas servidas por otra aplicación, compartidas públicamente o sincronizadas sin control. No versionar facturas ni subir la carpeta de datos al repositorio.
 
-`NODE_ENV=production` rechaza expresamente este adaptador local con 503. No se debe desplegar como almacenamiento definitivo en el disco efímero de un contenedor. Blob privado, identidad administrada, permisos mínimos y análisis de archivos se integrarán sin crear recursos por el asistente, respetando el despliegue manual acordado.
+`NODE_ENV=production` rechaza expresamente este adaptador local con 503. No se debe desplegar como almacenamiento definitivo en el disco efímero de un contenedor. Para seleccionar el Adapter Blob se configura `ATTACHMENT_STORAGE=blob`; la cuenta/contenedor y los permisos de identidad administrada se preparan manualmente según [Parte 8.2](parte-08-2-blob.md). Falta análisis de archivos y limpieza cloud, por lo que la funcionalidad **no está lista para uso empresarial**.
 
 ### Corrección del controlador Windows
 

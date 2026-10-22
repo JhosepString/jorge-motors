@@ -41,8 +41,8 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2025-06-01' = {
   }
 }
 
-// Las facturas son privadas: el backend las servirá con identidad administrada
-// o enlaces SAS de corta duración, nunca como blobs públicos.
+// Las facturas son privadas: el backend las leerá con identidad administrada
+// y las servirá únicamente tras autorizar al usuario; nunca como blobs públicos.
 resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2025-06-01' = {
   parent: storageAccount
   name: 'default'

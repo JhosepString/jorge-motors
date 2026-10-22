@@ -28,6 +28,8 @@
     "report:check": "node --env-file-if-exists=.env --import tsx src/cli/report-check.ts"
   },
   "dependencies": {
+    "@azure/identity": "^4.14.0",
+    "@azure/storage-blob": "^12.34.0",
     "@fontsource/noto-sans": "^5.3.0",
     "cors": "^2.8.5",
     "exceljs": "^4.4.0",
