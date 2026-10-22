@@ -1,0 +1,25 @@
+export interface AuditEvent {
+  requestId: string;
+  action: 'INVENTARIO_ENTRADA' | 'INVENTARIO_SALIDA' | 'MOVIMIENTO_REINTENTO' | 'HTTP_RECHAZADA' | 'HTTP_ERROR' | 'CONSULTA_PERFIL' | 'USUARIO_REGISTRADO' | 'ALERTA_CREADA' | 'ALERTA_ATENDIDA'
+    | 'NOTIFICACION_RECLAMADA' | 'NOTIFICACION_ACEPTADA' | 'NOTIFICACION_REINTENTO' | 'NOTIFICACION_AGOTADA' | 'ALERTA_ENVIADA'
+    | 'CATEGORIA_CREADA' | 'CATEGORIA_ACTUALIZADA' | 'PRODUCTO_CREADO' | 'PRODUCTO_ACTUALIZADO' | 'CATALOGO_CONSULTADO'
+    | 'PROVEEDOR_CREADO' | 'PROVEEDOR_ACTUALIZADO' | 'PROVEEDOR_CONSULTADO'
+    | 'FACTURA_CREADA' | 'FACTURA_ACTUALIZADA' | 'FACTURA_CONSULTADA' | 'FACTURA_ANULADA'
+    | 'FACTURA_DETALLE_CAMBIADO' | 'FACTURA_RECIBIDA' | 'FACTURA_RECEPCION_REINTENTO'
+    | 'ADJUNTO_RESERVADO' | 'ADJUNTO_LISTO' | 'ADJUNTO_REINTENTO' | 'ADJUNTOS_CONSULTADOS'
+    | 'ADJUNTO_DESCARGA_AUTORIZADA' | 'ADJUNTO_LIMPIADO' | 'REPORTE_INVENTARIO_CONSULTADO' | 'REPORTE_INVENTARIO_GENERADO'
+    | 'INVENTARIO_CONSULTADO' | 'MOVIMIENTOS_CONSULTADOS';
+  result: 'EXITO' | 'RECHAZADO' | 'ERROR';
+  userId: number | null;
+  tenantId: string | null;
+  objectId: string | null;
+  entityId: string | null;
+  code: string;
+  httpStatus: number;
+  before: Record<string, string | number | boolean | null> | null;
+  after: Record<string, string | number | boolean | null> | null;
+}
+
+export interface AuditRepository {
+  registrar(event: AuditEvent): Promise<void>;
+}

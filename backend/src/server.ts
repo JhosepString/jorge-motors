@@ -1,9 +1,11 @@
 import { createApp } from './app.js';
 import { parseEnvironment } from './config/env.js';
 import { consoleLogger } from './shared/logger.js';
+import { runtimeServices } from './infrastructure/runtime-services.js';
+import { SqlPoolSingleton } from './infrastructure/database/sql-pool.js';
 
 const config = parseEnvironment(process.env);
-const server = createApp(config).listen(config.PORT, config.HOST, () => {
+const server = createApp(config, consoleLogger, runtimeServices(process.env)).listen(config.PORT, config.HOST, () => {
   consoleLogger.info({ event: 'server_started', host: config.HOST, port: config.PORT });
 });
 
@@ -23,8 +25,9 @@ function shutdown(signal: string) {
   }, 10_000);
   deadline.unref();
   server.close((error) => {
-    clearTimeout(deadline);
-    process.exitCode = error ? 1 : 0;
+    void SqlPoolSingleton.getInstance().close().then(() => {
+      process.exitCode = error ? 1 : 0;
+    }).catch(() => { process.exitCode = 1; }).finally(() => { clearTimeout(deadline); });
   });
 }
 

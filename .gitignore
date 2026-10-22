@@ -16,7 +16,12 @@ node_modules/
 dist/
 build/
 coverage/
+test-results/
+playwright-report/
 *.tsbuildinfo
+
+# Archivos privados locales (nunca publicar ni versionar facturas)
+.local-data/
 
 # Sistema y editores
 .DS_Store
