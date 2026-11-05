@@ -1,0 +1,5 @@
+$ node --env-file-if-exists=.env --import tsx --watch src/server.ts
+{"level":"error","event":"unhandled_request_error","requestId":"2347947c-1636-4417-8284-52c78bffad8d"}
+{"level":"error","event":"unhandled_request_error","requestId":"ab422ca4-ee5b-4f46-aeed-08d59bb8f523"}
+{"level":"error","event":"audit_persistence_failed","requestId":"2347947c-1636-4417-8284-52c78bffad8d","action":"HTTP_ERROR","result":"ERROR","userId":null,"tenantId":"7f1563e9-20f9-4cd2-b943-b9bfb0c0b5c5","objectId":"f621c225-8390-4d66-aec0-29eafc709d6d","entityId":null,"code":"DATABASE_UNAVAILABLE","httpStatus":503,"before":null,"after":null,"destination":"console_fallback"}
+{"level":"error","event":"audit_persistence_failed","requestId":"ab422ca4-ee5b-4f46-aeed-08d59bb8f523","action":"HTTP_ERROR","result":"ERROR","userId":null,"tenantId":"7f1563e9-20f9-4cd2-b943-b9bfb0c0b5c5","objectId":"f621c225-8390-4d66-aec0-29eafc709d6d","entityId":null,"code":"DATABASE_UNAVAILABLE","httpStatus":503,"before":null,"after":null,"destination":"console_fallback"}

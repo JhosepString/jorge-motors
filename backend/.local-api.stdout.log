@@ -1,0 +1,309 @@
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\src\\server.ts'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\exceljs@4.4.0\\node_modules\\exceljs\\lib\\stream\\xlsx\\hyperlink-reader.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+{"level":"info","event":"http_request_completed","requestId":"f1bd65d0-7177-4a17-a333-d6581c138261","method":"GET","status":200,"durationMs":8}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+core-rest-pipeline@1.25.0\\node_modules\\@azure\\core-rest-pipeline\\dist\\esm\\policies\\userAgentPolicy.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+{"level":"info","event":"http_request_completed","requestId":"ce095e81-9d53-4bd0-bffc-4b7f9bf1372a","method":"OPTIONS","status":204,"durationMs":11}
+{"level":"info","event":"http_request_completed","requestId":"c3f7fe4e-4572-4c7e-bdd6-b23fd1ef0404","method":"OPTIONS","status":204,"durationMs":1}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\mssql@12.7.10\\node_modules\\mssql\\lib\\udt.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+{"level":"info","event":"http_request_completed","requestId":"0a03d788-cea7-4c53-adf8-0029b5652918","method":"OPTIONS","status":204,"durationMs":11}
+{"level":"info","event":"http_request_completed","requestId":"acf85886-e258-41ce-8ca0-2a9732df6c09","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"efd3cff6-8d8b-416b-8084-cf6b8a077884","method":"GET","status":200,"durationMs":1228}
+{"level":"info","event":"http_request_completed","requestId":"ce85a8c9-cc21-45ce-a642-f7a2ac1fdc01","method":"GET","status":200,"durationMs":1261}
+{"level":"info","event":"http_request_completed","requestId":"64d5b0f9-f0cb-4129-8d7b-73f53e0753bb","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"633cbb2f-ab56-4462-98c9-4ca56b1e2dfb","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"ff2426fc-d2a4-444b-9005-e0a4ed0423c1","method":"OPTIONS","status":204,"durationMs":2}
+{"level":"info","event":"http_request_completed","requestId":"30fdc429-26b4-45c3-b038-1c94d9dfc835","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"133b6d29-8080-48ff-94ce-f198a8749d65","method":"GET","status":200,"durationMs":106}
+{"level":"info","event":"http_request_completed","requestId":"a43f12c9-cf33-49fe-ae0a-be376b8ac46a","method":"GET","status":200,"durationMs":101}
+{"level":"info","event":"http_request_completed","requestId":"6183ebb9-29ca-4cf8-87cd-6c79111d1fb0","method":"GET","status":200,"durationMs":125}
+{"level":"info","event":"http_request_completed","requestId":"eefda745-9823-440e-87f4-0fd0f294f6e9","method":"GET","status":200,"durationMs":119}
+{"level":"info","event":"http_request_completed","requestId":"a13d6336-1dff-4e8b-9e06-593e858ecb07","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"1a1e196d-c538-4fb7-b295-96dbd7839d24","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"2661b963-bd1b-459c-906c-22e7f2ca6d09","method":"GET","status":200,"durationMs":51}
+{"level":"info","event":"http_request_completed","requestId":"57e0c1d5-a6b6-47f8-8ed2-dec331a1f8b8","method":"GET","status":200,"durationMs":58}
+{"level":"info","event":"http_request_completed","requestId":"54525cf8-f3f0-4ac5-9afa-695ae254774a","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"fc246eba-f601-4020-a3f8-fd8d4917366c","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"10f0be68-d34b-466c-af3c-c052ee5281b3","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"5752fc78-c6ed-4527-b484-c1ee1ab8afc8","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"8a43f869-0a88-41b6-8104-7775b8b7ba25","method":"GET","status":200,"durationMs":40}
+{"level":"info","event":"http_request_completed","requestId":"6d322665-7ef3-4a8e-852a-4233117eb2ab","method":"GET","status":200,"durationMs":45}
+{"level":"info","event":"http_request_completed","requestId":"e6f8aa57-84dd-4506-9ac6-bdd9f9ab2d31","method":"GET","status":200,"durationMs":51}
+{"level":"info","event":"http_request_completed","requestId":"ab071728-795f-4dfb-97d7-cb2afd5df953","method":"GET","status":200,"durationMs":53}
+{"level":"info","event":"http_request_completed","requestId":"7c497ca4-1a35-4aa3-9477-c28937b9f3a2","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"d34feb04-5a37-4130-a232-edf7e9983deb","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"39c24ace-5a42-4bb7-905f-e5554ec858eb","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"bd9f344c-9132-4716-9820-e583f1f77387","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"dca5e679-d07e-489c-b94b-cfa0477a70b9","method":"GET","status":200,"durationMs":50}
+{"level":"info","event":"http_request_completed","requestId":"569b76af-b142-4470-995d-db12e3835584","method":"GET","status":200,"durationMs":56}
+{"level":"info","event":"http_request_completed","requestId":"296c70c8-bdb4-49fc-a1b7-a10a1389a88e","method":"GET","status":200,"durationMs":70}
+{"level":"info","event":"http_request_completed","requestId":"31c8fcc6-1237-4381-a6f0-396cb985cce6","method":"GET","status":200,"durationMs":66}
+{"level":"info","event":"http_request_completed","requestId":"ed24a0f0-d347-4cdf-a474-a80c7b042e73","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"55015a00-5cf5-4882-b801-9066c491d4d3","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"0a8e3a97-ec47-4717-b121-ca87e4a13e1f","method":"GET","status":200,"durationMs":30}
+{"level":"info","event":"http_request_completed","requestId":"e1ad0775-395a-4b40-987d-e0739b008084","method":"GET","status":200,"durationMs":31}
+{"level":"info","event":"http_request_completed","requestId":"4dc9dd2f-d33e-4600-b9ca-033b62dcb26b","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"9b638d17-792d-4f24-915e-dba9759265af","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"5d300edf-1fd6-4711-b790-cc4e84d5e84a","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"aa0dbf7f-7848-4f8c-824c-d4d4538e906a","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"a42c8618-1dcf-47f1-bbd1-da645d37a374","method":"GET","status":200,"durationMs":21}
+{"level":"info","event":"http_request_completed","requestId":"3ad4ae2b-ad60-4ef6-abc5-8911f5e6a005","method":"GET","status":200,"durationMs":21}
+{"level":"info","event":"http_request_completed","requestId":"2751205f-1097-4629-8349-8d84fb2b3803","method":"GET","status":200,"durationMs":20}
+{"level":"info","event":"http_request_completed","requestId":"4fdfad2e-6076-4661-9aaa-bf6618a1dfa3","method":"GET","status":200,"durationMs":25}
+{"level":"info","event":"http_request_completed","requestId":"5aad0c4a-6fd0-4cf1-8e46-0da24d0ec006","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"43477665-647a-4252-83b9-4a129d4fdad8","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"56ed1e1a-839d-4656-a091-60d4ef69ea58","method":"GET","status":200,"durationMs":17}
+{"level":"info","event":"http_request_completed","requestId":"64412eda-c163-406e-9006-d067b60b5643","method":"GET","status":200,"durationMs":16}
+{"level":"info","event":"http_request_completed","requestId":"21fab7c6-39c4-44c8-bf83-d9d4b20bc516","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"2d47233b-ee1e-4fd5-abdc-9fb60e37d8d6","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"98dad0c1-64fb-46d7-8884-0b0fbe5fe1ff","method":"GET","status":200,"durationMs":25}
+{"level":"info","event":"http_request_completed","requestId":"8bf5e4f6-675d-4506-8b0e-8b3290df80cb","method":"GET","status":200,"durationMs":18}
+{"level":"info","event":"http_request_completed","requestId":"7fa4443b-ffbd-4f7c-a893-e6a0d020ae16","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"feb7026c-0275-40e2-bc3a-3f27a68d5713","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"9cad307a-d2eb-43cd-afee-75c17e4505d8","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"0d8f3c57-c822-447a-a210-4c6f766b35f4","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"d0a8de2f-b1ae-4044-8269-73f3e5ce75d0","method":"GET","status":200,"durationMs":20}
+{"level":"info","event":"http_request_completed","requestId":"d9cc3345-654c-4340-80ff-c6cd007e484f","method":"GET","status":200,"durationMs":32}
+{"level":"info","event":"http_request_completed","requestId":"e433b080-4493-41c9-8916-2d704c3eb04d","method":"GET","status":200,"durationMs":23}
+{"level":"info","event":"http_request_completed","requestId":"04d5b028-77b2-4f32-8f30-ddd0382fbbd9","method":"GET","status":200,"durationMs":27}
+{"level":"info","event":"http_request_completed","requestId":"e923dba5-feaa-4415-995e-901ca228a727","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"b093fbb5-da1f-46eb-9453-95580ca8844f","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"d4ef5aac-d369-42de-b61c-7972ffc7bba9","method":"GET","status":200,"durationMs":39}
+{"level":"info","event":"http_request_completed","requestId":"e8ff7b20-7a82-431b-b0d0-416064ee17d7","method":"GET","status":200,"durationMs":37}
+{"level":"info","event":"http_request_completed","requestId":"5296bd31-3da0-4791-ba90-a66f374a2741","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"02168029-fdd1-4855-aa45-96d0a10ea79e","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"b9190a87-1a9e-4068-8e75-36bbd8273ae0","method":"GET","status":200,"durationMs":30}
+{"level":"info","event":"http_request_completed","requestId":"6b9daf86-33b5-4d0f-aedc-275acfeb1c5b","method":"GET","status":200,"durationMs":34}
+{"level":"info","event":"http_request_completed","requestId":"b7f78c92-4acd-4415-a3f2-242134c79411","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"5197c2b9-4e44-4d30-b465-b2c35941b4a8","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"4372c59a-2266-405c-bafa-4588a42e65d3","method":"GET","status":200,"durationMs":26}
+{"level":"info","event":"http_request_completed","requestId":"9204e120-c17c-408c-b2e9-95a5413d08e9","method":"GET","status":200,"durationMs":25}
+{"level":"info","event":"http_request_completed","requestId":"51b92d2b-dcdb-4be5-a386-dc6168d888d6","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"d71bd0c1-6457-47c2-a6dc-b43a488e6aa2","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"9b983850-9c4f-4f99-ba45-7de9a9c4fa9b","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"8fe39dbe-70b7-47b3-8ca4-97cf93d71085","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"aa3730e0-c53f-4642-b34c-0e24f2f15412","method":"GET","status":200,"durationMs":54}
+{"level":"info","event":"http_request_completed","requestId":"80ecf5c4-dac6-4c3b-9050-c0a2362965e6","method":"GET","status":200,"durationMs":72}
+{"level":"info","event":"http_request_completed","requestId":"b0750fe4-773e-4c56-acf0-664c73d1d533","method":"GET","status":200,"durationMs":69}
+{"level":"info","event":"http_request_completed","requestId":"b9dc6398-a14b-4f87-abcd-03496e9b17fb","method":"GET","status":200,"durationMs":86}
+{"level":"info","event":"http_request_completed","requestId":"ee93fff7-0cad-48b4-89bc-133aa883525d","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"6f9c3fa2-479a-4805-8394-bd82e188cd91","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"b48a31ec-6209-47fa-9a74-ef5d5a4acdbf","method":"GET","status":200,"durationMs":12}
+{"level":"info","event":"http_request_completed","requestId":"77057289-5223-4e58-abec-c07c5ddf7d32","method":"GET","status":200,"durationMs":14}
+{"level":"info","event":"http_request_completed","requestId":"075abee6-7b67-44a7-8305-c9419e9a729b","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"1ebb0373-2a20-4707-952a-cb38363130a8","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"ae2b247b-0b38-4ae9-9809-301c6942201d","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"5aed92fa-abfd-480d-9ed2-1fdaf2cb7275","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"4f7c1f6d-ed92-49da-b9cf-2048b4fdf841","method":"GET","status":200,"durationMs":15}
+{"level":"info","event":"http_request_completed","requestId":"b2d2ea9d-9b82-496e-917c-264cf14d0d98","method":"GET","status":200,"durationMs":19}
+{"level":"info","event":"http_request_completed","requestId":"1432345f-cf12-44b2-925a-c1f711bcbb41","method":"GET","status":200,"durationMs":17}
+{"level":"info","event":"http_request_completed","requestId":"f43a196d-851c-44bc-8d42-0ea869b5d948","method":"GET","status":200,"durationMs":23}
+{"level":"info","event":"http_request_completed","requestId":"b47370e1-aa08-4810-a9a0-2c56f9b3a670","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"2dad2488-ad03-47df-b6fd-36464932cf9d","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"30dd43a1-ada7-40d7-bd6c-45b7f5261aea","method":"GET","status":200,"durationMs":14}
+{"level":"info","event":"http_request_completed","requestId":"90c92d41-a67c-447f-8c95-366dba9c784d","method":"GET","status":200,"durationMs":15}
+{"level":"info","event":"http_request_completed","requestId":"090f6b7f-8026-466c-8a3e-74b3ae3af29e","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"a189019b-c914-4f1f-b716-6739b4d2c48b","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"a2d8d7c6-3ebd-46d9-8c99-cf91e9b03c7a","method":"GET","status":200,"durationMs":47}
+{"level":"info","event":"http_request_completed","requestId":"124c88f7-da08-4ebd-9106-aec98f22e955","method":"GET","status":200,"durationMs":44}
+{"level":"info","event":"http_request_completed","requestId":"2ad4e96d-a9bf-4306-a21f-a7006eeb1e37","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"03b5d48c-09f1-41c6-b299-edb73d549245","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"012adda1-aae4-4675-8895-ff675d872723","method":"GET","status":200,"durationMs":30}
+{"level":"info","event":"http_request_completed","requestId":"2c3ef1be-11e4-4779-87ad-8bb5cfc6a8d5","method":"GET","status":200,"durationMs":41}
+{"level":"info","event":"http_request_completed","requestId":"67118332-2e81-46f9-8439-ea92822f9926","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"f52474bb-aa40-433a-b8d5-aa6406d133ee","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"ec8a2dda-e019-4e94-a950-74ab22e619ad","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"8bc05eb1-70ab-4ea4-b8a0-f0b97891680b","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"ca491bdb-903d-415a-b6dd-c9581687e43b","method":"GET","status":200,"durationMs":19}
+{"level":"info","event":"http_request_completed","requestId":"4b12e9cc-c23d-4ede-a65c-e4bd19d68631","method":"GET","status":200,"durationMs":20}
+{"level":"info","event":"http_request_completed","requestId":"3eea2dfc-bf2f-46c1-b3d0-5f3f4d669d54","method":"GET","status":200,"durationMs":18}
+{"level":"info","event":"http_request_completed","requestId":"3d7112b4-0747-45c1-94d2-54c1e3d45c83","method":"GET","status":200,"durationMs":21}
+{"level":"info","event":"http_request_completed","requestId":"8619e97a-a0b1-4dad-8856-3934026be7df","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"b37d44f0-7a58-4ef4-b343-5193327a0236","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"122f0208-96de-4b43-b2ef-b52e3d622755","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"84f845ae-7dfb-4d27-b8e8-201bc75ea401","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"a8790f77-b8b3-4853-b5c3-1ecbed83c04c","method":"GET","status":200,"durationMs":46}
+{"level":"info","event":"http_request_completed","requestId":"ed0320a0-fb4c-47ad-98ed-de0d1df78b3d","method":"GET","status":200,"durationMs":49}
+{"level":"info","event":"http_request_completed","requestId":"55235329-5a5b-4393-8e0f-df04de5e94b7","method":"GET","status":200,"durationMs":47}
+{"level":"info","event":"http_request_completed","requestId":"3ff33feb-aef8-4b9b-bb66-f530ebccc2c4","method":"GET","status":200,"durationMs":53}
+{"level":"info","event":"http_request_completed","requestId":"48e67d30-37d9-44e1-bfb5-9620ed12bb03","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"9df768d0-ba0e-4e8e-a884-650262da8217","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"679a4073-83ec-44d7-98c2-b0eba939b848","method":"GET","status":200,"durationMs":15}
+{"level":"info","event":"http_request_completed","requestId":"6112b092-13fe-4278-8d88-701d8c118644","method":"GET","status":200,"durationMs":19}
+{"level":"info","event":"http_request_completed","requestId":"1ea7cdeb-10f2-4e31-95c4-4c219717b627","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"16babd7d-30df-4089-b1b5-b58a061e29fc","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"37156108-b0f5-4b19-81cd-e4e91ffb0a3e","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"1f00291a-ef61-4a46-8bde-4dcf570bfa3a","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"3b99d767-8ee8-4621-9a2e-c65021bf05c3","method":"GET","status":200,"durationMs":12}
+{"level":"info","event":"http_request_completed","requestId":"83d540b7-cc00-43a1-ad84-b64f8d45b150","method":"GET","status":200,"durationMs":15}
+{"level":"info","event":"http_request_completed","requestId":"a584e1e5-f238-43d4-aed8-9b11b5fe1e6a","method":"GET","status":200,"durationMs":14}
+{"level":"info","event":"http_request_completed","requestId":"86904a2d-3b73-42a3-a1ce-0172c0218fc5","method":"GET","status":200,"durationMs":19}
+{"level":"info","event":"http_request_completed","requestId":"71741c5e-54bf-4c0a-8905-bc223c91c147","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"dc37aff1-07ab-41ff-9196-0928275f601e","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"a0a1f043-ddf4-4aa6-83e2-8bfa9567c653","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"87825e85-8317-4894-a96b-977965a3f4df","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"906e362f-3970-459f-94a2-5003fd486bc6","method":"GET","status":200,"durationMs":25}
+{"level":"info","event":"http_request_completed","requestId":"ea5ba4a7-f44a-48bc-86c9-9dae145c9617","method":"GET","status":200,"durationMs":27}
+{"level":"info","event":"http_request_completed","requestId":"1f566166-78a4-4e72-89f3-408dd7ae1e8f","method":"GET","status":200,"durationMs":27}
+{"level":"info","event":"http_request_completed","requestId":"bbd6c54e-84ca-40bd-ab01-5503d62d9221","method":"GET","status":200,"durationMs":33}
+{"level":"info","event":"http_request_completed","requestId":"7edfa77f-0c5e-4960-a784-808d28d783b2","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"0e9dcb5e-29e6-4915-8048-3113967580cf","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"cfdf5e76-5f36-48a8-806f-5b13991aeece","method":"GET","status":200,"durationMs":612}
+{"level":"info","event":"http_request_completed","requestId":"575eb9c1-d865-41fd-90fe-34fd62320047","method":"GET","status":200,"durationMs":618}
+{"level":"info","event":"http_request_completed","requestId":"157a9a9f-a0f8-41a5-8dc1-e2d3b72743d9","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"6ad308c2-0a50-4448-88d0-356535177b67","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"1003c430-54e4-4b7b-8d41-94f9077b2ec3","method":"GET","status":200,"durationMs":14}
+{"level":"info","event":"http_request_completed","requestId":"7c301c91-9331-4e51-932c-588a93142e85","method":"GET","status":200,"durationMs":17}
+{"level":"info","event":"http_request_completed","requestId":"04ca6f8d-1098-4177-b404-cb518c823d42","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"5e7d3e43-c834-43d1-a98b-c5cad64377dc","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"c8b75abc-66c8-4255-ad4c-60a3b0d96606","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"7b63e46e-3fc1-403a-abab-4def85b6129a","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"d639e75c-3f26-4919-a6a9-8e586b1b657c","method":"GET","status":200,"durationMs":27}
+{"level":"info","event":"http_request_completed","requestId":"1ed725fd-70f6-41e8-8433-b3aaed935421","method":"GET","status":200,"durationMs":32}
+{"level":"info","event":"http_request_completed","requestId":"3621fcb6-2108-42fe-9aa8-cdfd9a83c52e","method":"GET","status":200,"durationMs":29}
+{"level":"info","event":"http_request_completed","requestId":"05ae4b4e-20a3-4104-9bef-c7de593d7750","method":"GET","status":200,"durationMs":36}
+{"level":"info","event":"http_request_completed","requestId":"e71ee381-f5f6-43b3-9dbf-13c368f9497e","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"fa40be8f-778c-48b0-8710-ffb1b688552f","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"95f00b73-f5af-44cb-9765-991fa2c04abd","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"770c4d7a-ad9f-4de3-9f33-5ed3c70be6ed","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"f5c4e846-f231-4b35-8346-d81a988a8b71","method":"GET","status":200,"durationMs":19}
+{"level":"info","event":"http_request_completed","requestId":"9c50a989-26bb-471f-8273-f33a8a187e43","method":"GET","status":200,"durationMs":25}
+{"level":"info","event":"http_request_completed","requestId":"fd17c80d-6eb0-4320-a31b-7319596d2049","method":"GET","status":200,"durationMs":26}
+{"level":"info","event":"http_request_completed","requestId":"92aae20a-a35a-46b3-a919-f6122db0a1c2","method":"GET","status":200,"durationMs":26}
+{"level":"info","event":"http_request_completed","requestId":"ab68e2ce-38a1-453c-adc7-f2e90c073d0b","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"6c1031b1-8a3a-4f36-9b25-3ca573ee90ba","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"6520ee51-84d7-4208-8161-7d7ccb86e3e3","method":"GET","status":200,"durationMs":12}
+{"level":"info","event":"http_request_completed","requestId":"14c0d6e5-aff6-40eb-89a8-8488f3928caf","method":"GET","status":200,"durationMs":31}
+{"level":"info","event":"http_request_completed","requestId":"7d1f5d85-c066-47f7-a81a-fbaa09f586c5","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"2930e564-c5eb-4fc4-8799-0b8c993ae48b","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"ca40c7e3-1ecf-4f13-b732-81cbacd7274b","method":"GET","status":200,"durationMs":15}
+{"level":"info","event":"http_request_completed","requestId":"56769e47-a0bd-4e40-b933-f68b46c5e41d","method":"GET","status":200,"durationMs":12}
+{"level":"info","event":"http_request_completed","requestId":"37830751-9610-45c7-bfc3-84cfd5d87974","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"4e470a0e-4e3f-4d9d-a0c2-a1824c453700","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"d8651ca2-6f09-4f67-813f-3ce0ff74aed6","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"0c4d25c9-6cf7-442d-966c-6c59777f8f37","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"87e42ac1-45a7-42be-b766-ebe95c295873","method":"GET","status":200,"durationMs":17}
+{"level":"info","event":"http_request_completed","requestId":"5b47b45d-99b7-4586-9171-689d00d43d88","method":"GET","status":200,"durationMs":14}
+{"level":"info","event":"http_request_completed","requestId":"b04a8146-fd59-471f-a6df-b92e761977b8","method":"GET","status":200,"durationMs":16}
+{"level":"info","event":"http_request_completed","requestId":"ec64c1fd-f90e-49da-a210-6e5035851704","method":"GET","status":200,"durationMs":18}
+{"level":"info","event":"http_request_completed","requestId":"809704ed-0820-4fb5-a73c-01840862cb9e","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"c3ac6242-98b3-4504-b61b-8119843d3331","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"3f90429b-8b88-44b4-83d7-88de3a99b93f","method":"GET","status":200,"durationMs":18}
+{"level":"info","event":"http_request_completed","requestId":"75706a34-4fd9-4f5a-98ef-93858b21887d","method":"GET","status":200,"durationMs":18}
+{"level":"info","event":"http_request_completed","requestId":"12cb0b7d-d1ed-455e-97db-b49245b6e668","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"fd588ced-28b6-4f42-aeea-535b426a7a9c","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"da44c896-500e-49ec-b370-06d2e6f79dbe","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"130f6751-e07a-4a2b-968f-e9ac1120b17a","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"4d792597-e60d-4e45-a892-eb0f953b61a1","method":"GET","status":200,"durationMs":21}
+{"level":"info","event":"http_request_completed","requestId":"7ba7a73b-1b63-4dee-8ccc-1bcef93e3546","method":"GET","status":200,"durationMs":18}
+{"level":"info","event":"http_request_completed","requestId":"a5ea93f5-3240-47b7-9aa5-e1bf2af9d76f","method":"GET","status":200,"durationMs":17}
+{"level":"info","event":"http_request_completed","requestId":"22e1a775-9944-410b-b4c5-2565f4aca5c2","method":"GET","status":200,"durationMs":23}
+{"level":"info","event":"http_request_completed","requestId":"14c4e8ce-3109-42f7-8ac7-b684a6a017ae","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"dba4d694-80f1-4b39-ab26-bac2f2200bac","method":"GET","status":200,"durationMs":250}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\pdfkit@0.20.2\\node_modules\\pdfkit\\js\\standard-fonts\\chunks\\standardGlyphNames-DNHAb7rp.cjs'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+{"level":"info","event":"http_request_completed","requestId":"43ccd0e5-df4f-4d6f-910f-0c60b8fa5674","method":"OPTIONS","status":204,"durationMs":6}
+{"level":"info","event":"http_request_completed","requestId":"f7002603-bbdf-40ea-9208-6d76af161c2b","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"70f0aaad-f9a0-4691-ba3a-30c7c1226193","method":"GET","status":200,"durationMs":1049}
+{"level":"info","event":"http_request_completed","requestId":"967f5b9e-6a6c-4c69-9d83-ad16256e86f3","method":"GET","status":200,"durationMs":1072}
+{"level":"info","event":"http_request_completed","requestId":"6cd2adaa-adb3-44e6-8af6-a0666d0a4905","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"c599025c-00a4-4f41-b4fc-0721dd61740b","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"296aaecb-d5b7-4714-ae2b-0cb2e68a4d0b","method":"GET","status":200,"durationMs":25}
+{"level":"info","event":"http_request_completed","requestId":"d6d13fad-fe0d-4bda-a33a-ab7ac22df27c","method":"GET","status":200,"durationMs":29}
+{"level":"info","event":"http_request_completed","requestId":"4d62890e-bb0a-4bc2-9d04-ab40d26a5b6c","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"35b42f65-60f3-4106-ba84-002979319d06","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"ac6b097e-9cc5-4428-8932-08eb6809cbb6","method":"GET","status":200,"durationMs":22}
+{"level":"info","event":"http_request_completed","requestId":"210e0dfc-abb8-4fc6-a298-9f849e72ca6a","method":"GET","status":200,"durationMs":24}
+{"level":"info","event":"http_request_completed","requestId":"160d5fbf-c03f-4e47-85a8-9f8f7cfe29cc","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"65e76936-d862-41be-a722-042339ecf00a","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"6293b531-cd5a-4ac6-bd5d-901974b424ee","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"eac90efa-2aff-46f4-979f-47c3f1207ef5","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"9591bc48-c732-45f7-979d-59bb2d05e51a","method":"GET","status":200,"durationMs":67}
+{"level":"info","event":"http_request_completed","requestId":"5a53ac4d-e025-4749-a5cf-df76e7584020","method":"GET","status":200,"durationMs":31}
+{"level":"info","event":"http_request_completed","requestId":"c7b6d90b-75ae-4328-8b4b-fd791790deb9","method":"GET","status":200,"durationMs":34}
+{"level":"info","event":"http_request_completed","requestId":"dd15d829-7e32-42cd-8e3f-7f61d71f6179","method":"GET","status":200,"durationMs":84}
+{"level":"info","event":"http_request_completed","requestId":"bcd34da0-bc1a-41fd-b680-0afe31b24cbe","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"db02da74-8351-4777-b71a-3cda4f961b0a","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"6fb123e6-a9b9-4edf-8282-2c93f27277ae","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"a26bb1e9-e004-4a55-a53b-0bfb6ce9f23f","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"e4ab8bdd-9868-4c2f-a16f-e390de22dd8b","method":"GET","status":200,"durationMs":44}
+{"level":"info","event":"http_request_completed","requestId":"5fbf7615-6b44-4704-8e31-fcae062f32fd","method":"GET","status":200,"durationMs":44}
+{"level":"info","event":"http_request_completed","requestId":"2afd21ff-8e63-4af8-a2c4-639d45a044f8","method":"GET","status":200,"durationMs":50}
+{"level":"info","event":"http_request_completed","requestId":"389d6d96-159d-44d8-aae1-0ae3d3328410","method":"GET","status":200,"durationMs":54}
+{"level":"info","event":"http_request_completed","requestId":"637d98b5-4f95-4ed9-98cf-bb8962c25060","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"ef57654a-234f-4c64-b0f4-82bf178e9f7b","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"3ebe68a6-aa40-406f-b61a-1e3eb735306a","method":"GET","status":200,"durationMs":26}
+{"level":"info","event":"http_request_completed","requestId":"ac23cfd5-480e-47fd-bcfc-b97cf82fd2ae","method":"GET","status":200,"durationMs":27}
+{"level":"info","event":"http_request_completed","requestId":"1329119c-9819-4ce5-8de5-a9c320c3248d","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"a598293e-f1e8-4cde-9b7e-832aa83a01b0","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"03c60237-267a-4e77-9192-0f6af5f820bf","method":"GET","status":200,"durationMs":1038}
+{"level":"info","event":"http_request_completed","requestId":"bc75dcf8-dfed-4a92-bb4c-8c6053cb201b","method":"GET","status":200,"durationMs":1055}
+{"level":"info","event":"http_request_completed","requestId":"d6413658-e14e-4f78-aca6-0875411537d7","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"e7b72ccb-e46b-4c45-84e8-e69f71d1298d","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"7b82fc0c-a917-44d6-b007-22abfd843438","method":"GET","status":200,"durationMs":188}
+{"level":"info","event":"http_request_completed","requestId":"78cc5829-535a-4e7b-a9c5-0b78553e806c","method":"GET","status":200,"durationMs":228}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\src\\modules\\compras\\presentation\\attachment.routes.ts'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\tsx@4.23.15\\node_modules\\tsx\\dist\\lexer-CanA6ArK.mjs'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\jose@6.2.13\\node_modules\\jose\\dist\\webapi\\lib\\asn1.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\exceljs@4.4.0\\node_modules\\exceljs\\lib\\stream\\xlsx\\hyperlink-reader.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+{"level":"info","event":"http_request_completed","requestId":"869dd2c6-e245-44bd-a6a6-cd84b6020013","method":"OPTIONS","status":204,"durationMs":8}
+{"level":"info","event":"http_request_completed","requestId":"c915de52-768d-4b74-9019-6c141b6ece56","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"20b373c0-52da-42fb-af77-3c2565495197","method":"GET","status":200,"durationMs":1231}
+{"level":"info","event":"http_request_completed","requestId":"329f3cec-c3e5-44dc-908b-1c7dffcea68f","method":"GET","status":200,"durationMs":1269}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\mssql@12.7.10\\node_modules\\mssql\\lib\\udt.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\.env'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+{"level":"info","event":"http_request_completed","requestId":"399e4f5d-6c46-4c0c-b052-a4868129191a","method":"GET","status":200,"durationMs":8}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\.env'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+{"level":"info","event":"http_request_completed","requestId":"d1dace86-e7b9-4b79-87cc-503f94e2e7db","method":"OPTIONS","status":204,"durationMs":8}
+{"level":"info","event":"http_request_completed","requestId":"bfe837b9-b39f-4255-93c6-7189ba9df017","method":"OPTIONS","status":204,"durationMs":5}
+{"level":"info","event":"http_request_completed","requestId":"45db7234-436e-4960-9a0c-aa2e4d840f75","method":"GET","status":200,"durationMs":8999}
+{"level":"info","event":"http_request_completed","requestId":"c181d17a-83c0-4dec-8990-9ca3c8926ad9","method":"GET","status":200,"durationMs":9059}
+{"level":"info","event":"http_request_completed","requestId":"9925f9f8-c277-427a-a4a3-44fdfe9d1117","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"3fb9e1d6-aa51-46ea-aa56-6e9f72f64eb8","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"4b6edf7a-1443-4c77-ba83-9daa8a746f6b","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"62efd275-d937-4928-a4d0-20832fbbb481","method":"OPTIONS","status":204,"durationMs":0}
+{"level":"info","event":"http_request_completed","requestId":"07f27c8e-35bb-4529-9870-6831a1858369","method":"GET","status":200,"durationMs":1577}
+{"level":"info","event":"http_request_completed","requestId":"3493136f-cf62-4a64-98a6-70c093eb16e1","method":"GET","status":200,"durationMs":1594}
+{"level":"info","event":"http_request_completed","requestId":"069df430-b8d0-4a77-afcc-c86b939b2e54","method":"GET","status":200,"durationMs":2561}
+{"level":"info","event":"http_request_completed","requestId":"29f5645c-cffe-44e3-824b-7836c2aaab53","method":"GET","status":200,"durationMs":2580}
+{"level":"info","event":"http_request_completed","requestId":"194da771-f324-4092-b0fb-0f9d8d54c9da","method":"GET","status":200,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"e8f99796-71bd-437e-b6ef-bd6926f90635","method":"GET","status":401,"durationMs":2971}
+{"level":"info","event":"http_request_completed","requestId":"b977bba0-f65c-44ca-88ad-85d54bc39c6f","method":"GET","status":401,"durationMs":284}
+{"level":"info","event":"http_request_completed","requestId":"7f2b215f-6171-4325-b563-b3e053a4e1c4","method":"GET","status":403,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"26ec3b20-2ad5-4dc2-98e2-2e53534e9464","method":"GET","status":401,"durationMs":2719}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\src\\modules\\compras\\domain\\purchase-error.ts'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\exceljs@4.4.0\\node_modules\\exceljs\\lib\\stream\\xlsx\\hyperlink-reader.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+{"level":"info","event":"http_request_completed","requestId":"95f5845c-136a-4a3d-8e60-7d40c428aa1f","method":"OPTIONS","status":204,"durationMs":6}
+{"level":"info","event":"http_request_completed","requestId":"d239abdf-dfae-4931-9ff4-dc9fb5522426","method":"OPTIONS","status":204,"durationMs":1}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\mssql@12.7.10\\node_modules\\mssql\\lib\\udt.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+{"level":"info","event":"http_request_completed","requestId":"be750604-3c83-475e-9468-b08f438fd2b0","method":"OPTIONS","status":204,"durationMs":7}
+{"level":"info","event":"http_request_completed","requestId":"7d30d4b7-dbd1-4ea9-834e-129da039cefd","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"2347947c-1636-4417-8284-52c78bffad8d","method":"GET","status":503,"durationMs":22163}
+{"level":"info","event":"http_request_completed","requestId":"ab422ca4-ee5b-4f46-aeed-08d59bb8f523","method":"GET","status":503,"durationMs":22144}
+{"level":"info","event":"http_request_completed","requestId":"43cb86d9-816e-4c33-ab93-00504d953aea","method":"GET","status":200,"durationMs":1}

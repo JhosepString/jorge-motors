@@ -16,6 +16,7 @@
     "check": "pnpm run typecheck && pnpm test && pnpm run build",
     "test:sql": "tsx --test --test-concurrency=1 tests/integration/*.test.ts",
     "db:migrate": "node --env-file-if-exists=.env --import tsx src/cli/migrate.ts",
+    "demo:evidence": "node --env-file-if-exists=.env --import tsx src/cli/demo-evidence.ts",
     "auth:check": "node --env-file-if-exists=.env --import tsx src/cli/auth-check.ts",
     "db:user:add": "node --env-file-if-exists=.env --import tsx src/cli/register-user.ts",
     "outbox:status": "node --env-file-if-exists=.env --import tsx src/cli/outbox-status.ts",
