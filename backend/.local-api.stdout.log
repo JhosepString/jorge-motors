@@ -307,3 +307,185 @@ Restarting 'src/server.ts'
 {"level":"info","event":"http_request_completed","requestId":"2347947c-1636-4417-8284-52c78bffad8d","method":"GET","status":503,"durationMs":22163}
 {"level":"info","event":"http_request_completed","requestId":"ab422ca4-ee5b-4f46-aeed-08d59bb8f523","method":"GET","status":503,"durationMs":22144}
 {"level":"info","event":"http_request_completed","requestId":"43cb86d9-816e-4c33-ab93-00504d953aea","method":"GET","status":200,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"4d0da191-d236-4d4a-a1ed-7b5abdbd1b87","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"7f27c125-5599-4b18-bf31-ae96379b4904","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"78b70f33-c20a-4b8d-8c09-8173d8e8bb93","method":"GET","status":503,"durationMs":9284}
+{"level":"info","event":"http_request_completed","requestId":"77ec5689-bc5e-48d9-9d3e-590fc7f3aaad","method":"GET","status":503,"durationMs":9291}
+{"level":"info","event":"http_request_completed","requestId":"414773fb-bb7a-4dae-bd37-44876b6654f7","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"52d2c765-cf09-4c96-990a-e4115b7f6131","method":"OPTIONS","status":204,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"5747afa3-7548-4ffb-8e8a-4dd7fe0e4f96","method":"GET","status":503,"durationMs":5362}
+{"level":"info","event":"http_request_completed","requestId":"eefb7e85-81a3-4987-b5e9-d116e58ad4b3","method":"GET","status":503,"durationMs":5358}
+{"level":"info","event":"http_request_completed","requestId":"bd54da9c-0092-48e5-9b0b-4b5940343b47","method":"GET","status":200,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"ec37e504-2fad-4755-9aa2-f2852a75ab94","method":"GET","status":200,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"ecb39f02-f4df-4894-91b9-649380e98ea8","method":"GET","status":401,"durationMs":2932}
+{"level":"info","event":"http_request_completed","requestId":"ab5a9cdf-57ce-43ce-8080-02044389f747","method":"GET","status":401,"durationMs":2726}
+{"level":"info","event":"http_request_completed","requestId":"a3ce870e-3cf7-42ec-b9a2-ca884fe56a62","method":"GET","status":401,"durationMs":2800}
+{"level":"info","event":"http_request_completed","requestId":"8655eeb8-20ce-4dc6-bc73-76fb0982ab18","method":"GET","status":401,"durationMs":2445}
+{"level":"info","event":"http_request_completed","requestId":"3ed7d527-ac24-4b74-87f5-78d59b4b57e8","method":"GET","status":403,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"f86b2e5c-2249-4a90-949c-75c457e6544f","method":"GET","status":200,"durationMs":1}
+{"level":"info","event":"http_request_completed","requestId":"5690e22a-2bd8-4662-b2fd-d366309201bb","method":"GET","status":401,"durationMs":3174}
+{"level":"info","event":"http_request_completed","requestId":"68617d85-8cb3-45f0-8ccd-839eaf6db9ba","method":"GET","status":401,"durationMs":2643}
+{"level":"info","event":"http_request_completed","requestId":"838565c2-8661-488f-86db-65813d5e8a47","method":"GET","status":403,"durationMs":0}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\zod@4.6.7\\node_modules\\zod\\v4\\core\\json-schema.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\.env'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\src\\modules\\auth\\infrastructure\\entra.ts'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\tsx@4.23.15\\node_modules\\tsx\\dist\\register-B1c7OH6V.cjs'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+identity@4.14.0\\node_modules\\@azure\\identity\\dist\\esm\\msal\\utils.js'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@typespec+ts-http-runtime@0.3.9\\node_modules\\@typespec\\ts-http-runtime\\dist\\esm\\util\\inspect.js'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\exceljs@4.4.0\\node_modules\\exceljs\\lib\\xlsx\\xform\\sheet\\picture-xform.js'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\exceljs@4.4.0\\node_modules\\exceljs\\lib\\xlsx\\xform\\drawing\\one-cell-anchor-xform.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\body-parser@2.3.0\\node_modules\\body-parser\\lib\\types\\raw.js'
+Restarting 'src/server.ts'
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\@azure\\identity'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+msal-node@7.1.0\\node_modules\\@azure\\msal-node\\dist\\cache\\serializer\\Deserializer.mjs'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+{"level":"info","event":"http_request_completed","requestId":"995f33fd-db65-410d-97e2-e849777ee712","method":"OPTIONS","status":204,"durationMs":6}
+{"level":"info","event":"http_request_completed","requestId":"fb314114-0f14-4c24-850a-e9ed438f8c9c","method":"OPTIONS","status":204,"durationMs":1}
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+msal-node@7.1.0\\node_modules\\@azure\\msal-node\\lib\\msal-node.cjs'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+msal-common@16.14.2\\node_modules\\@azure\\msal-common\\dist\\index-node.mjs'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+msal-common@16.14.2\\node_modules\\@azure\\msal-common\\dist\\telemetry\\server\\ServerTelemetryManager.mjs'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\body-parser@2.4.0\\node_modules\\body-parser\\lib\\types\\text.js'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+identity@4.14.1\\node_modules\\@azure\\identity\\dist\\esm\\util\\certificatesUtils.js'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+identity@4.14.1\\node_modules\\@azure\\identity\\dist\\esm\\credentials\\clientCertificateCredential.js'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+identity@4.14.1\\node_modules\\@azure\\identity\\dist\\esm\\constants.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+identity@4.14.1\\node_modules\\@azure\\identity\\dist\\esm\\constants.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\zod@4.6.7\\node_modules\\zod\\v4\\core\\json-schema.js'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+msal-common@16.14.2\\node_modules\\@azure\\msal-common\\dist\\request\\BaseAuthRequest.mjs'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+core-tracing@1.4.0\\node_modules\\@azure\\core-tracing\\dist\\esm\\tracingClient.js'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\src\\server.ts'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\has-tostringtag@1.0.2\\node_modules\\has-tostringtag\\shams.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\src\\modules\\inventario\\application\\inventario.facade.ts'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\exceljs@4.4.0\\node_modules\\exceljs\\lib\\stream\\xlsx\\hyperlink-reader.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+core-rest-pipeline@1.25.0\\node_modules\\@azure\\core-rest-pipeline\\dist\\esm\\policies\\userAgentPolicy.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+core-rest-pipeline@1.25.0\\node_modules\\@azure\\core-rest-pipeline\\dist\\esm\\policies\\userAgentPolicy.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+core-rest-pipeline@1.25.0\\node_modules\\@azure\\core-rest-pipeline\\dist\\esm\\policies\\userAgentPolicy.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+core-rest-pipeline@1.25.0\\node_modules\\@azure\\core-rest-pipeline\\dist\\esm\\policies\\userAgentPolicy.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\src\\modules\\auth\\infrastructure\\entra.ts'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\exceljs@4.4.0\\node_modules\\exceljs\\lib\\stream\\xlsx\\hyperlink-reader.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\graceful-fs@4.2.11\\node_modules\\graceful-fs\\polyfills.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\src\\middleware\\authentication.ts'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\exceljs@4.4.0\\node_modules\\exceljs\\lib\\stream\\xlsx\\hyperlink-reader.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\lodash.isinteger@4.0.4\\node_modules\\lodash.isinteger\\index.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\src\\modules\\auth\\presentation\\auth.routes.ts'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\jose@6.2.13\\node_modules\\jose\\dist\\webapi\\util\\decode_protected_header.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+core-rest-pipeline@1.25.0\\node_modules\\@azure\\core-rest-pipeline\\dist\\esm\\policies\\userAgentPolicy.js'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\zod@4.6.7\\node_modules\\zod\\v4\\core\\memoizer.js'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\readable-stream@2.3.8\\node_modules\\readable-stream\\lib\\_stream_writable.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\exceljs@4.4.0\\node_modules\\exceljs\\lib\\stream\\xlsx\\hyperlink-reader.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\src\\modules\\auth\\application\\offline-grant.ts'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\@azure+identity@4.14.1\\node_modules\\@azure\\identity\\dist\\esm\\plugins\\consumer.js'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\src\\app.ts'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\exceljs@4.4.0\\node_modules\\exceljs\\lib\\xlsx\\xform\\sheet\\col-xform.js'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\uuid@11.1.1\\node_modules\\uuid\\dist\\cjs\\rng.js'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\src\\infrastructure\\runtime-services.ts'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\exceljs@4.4.0\\node_modules\\exceljs\\lib\\stream\\xlsx\\hyperlink-reader.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\src\\infrastructure\\database\\sql-alerts.ts'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\has-symbols@1.1.0\\node_modules\\has-symbols\\shams.js'
+Restarting 'src/server.ts'
+Change detected in 'C:\\Users\\josen\\OneDrive\\Documents\\CURSOS\\Arquitectura de software\\proyecto_final\\jorge-motors\\backend\\node_modules\\.pnpm\\exceljs@4.4.0\\node_modules\\exceljs\\lib\\stream\\xlsx\\hyperlink-reader.js'
+Restarting 'src/server.ts'
+{"level":"info","event":"server_started","host":"127.0.0.1","port":3000}
+Failed running 'src/server.ts'. Waiting for file changes before restarting...

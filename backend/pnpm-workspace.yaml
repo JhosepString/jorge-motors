@@ -6,3 +6,5 @@ allowBuilds:
 overrides:
   # ExcelJS usa únicamente uuid.v4; conservar CommonJS con versión corregida.
   'exceljs>uuid': 11.1.1
+  # Express 5.3 admite esta versión que corrige GHSA-27r3-jxmh-p828.
+  'express>body-parser': 2.4.0

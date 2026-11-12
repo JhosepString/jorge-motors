@@ -8,9 +8,18 @@ import type { FacturasFacade } from './modules/compras/application/facturas.faca
 import type { AdjuntosFacade } from './modules/compras/application/adjuntos.facade.js';
 import type { ReportesFacade } from './modules/reportes/application/inventory-report.js';
 import type { InventoryReadFacade } from './modules/inventario/application/inventory-read.js';
+import type { OfflineGrantSigner } from './modules/auth/application/offline-grant.js';
+import type { SqlSyncService } from './infrastructure/database/sql-sync.js';
+import type { SqlDeviceService } from './infrastructure/database/sql-devices.js';
+import type { SqlUserManagement } from './infrastructure/database/sql-users.js';
 
 export interface BackendServices {
   verifyToken: AccessTokenVerifier;
+  readiness?(): Promise<void>;
+  offlineGrant?: OfflineGrantSigner;
+  sync?(): Promise<SqlSyncService>;
+  devices?(): Promise<SqlDeviceService>;
+  users?(): Promise<SqlUserManagement>;
   profiles: UserProfileRepository;
   audit: AuditRepository;
   inventory(): Promise<InventarioFacade>;

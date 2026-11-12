@@ -139,7 +139,7 @@ export function InventoryPage({ api, profile }: { api: ApiClient; profile: Profi
                             <small className="sku">{p.sku}</small>
                             <strong>{p.nombre}</strong>
                           </td>
-                          <td>{p.categoria}</td>
+                          <td>{p.categoria}{p.tipo === 'HERRAMIENTA' ? ' · Herramienta' : ''}</td>
                           <td className="quantity">{p.stockActual}</td>
                           <td className="mono">{p.stockMinimo}</td>
                           <td>
@@ -167,13 +167,14 @@ export function InventoryPage({ api, profile }: { api: ApiClient; profile: Profi
                       <div>
                         <h2>{p.nombre}</h2>
                         <small className="sku">{p.sku}</small>
-                        <p>{p.categoria}</p>
+                        <p>{p.categoria}{p.tipo === 'HERRAMIENTA' ? ' · Herramienta' : ''}</p>
                       </div>
                       <strong className="quantity">{p.stockActual} unidades</strong>
                       <Badge state={stockStatus(p)} />
-                      <Link className="text-button" to={`/movimiento?producto=${p.id}`}>
-                        Registrar salida →
-                      </Link>
+                      {p.tipo === 'HERRAMIENTA' ? <span>Préstamo pendiente de implementar</span> :
+                        <Link className="text-button" to={`/movimiento?sku=${encodeURIComponent(p.sku)}`}>
+                          Registrar salida →
+                        </Link>}
                     </article>
                   ))}
                 </div>

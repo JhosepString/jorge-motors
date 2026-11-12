@@ -1,0 +1,61 @@
+{
+  "name": "jorge-motors-desktop",
+  "version": "0.1.8",
+  "private": true,
+  "type": "module",
+  "main": "main.mjs",
+  "scripts": {
+    "start": "electron .",
+    "prepare:frontend": "node scripts/prepare-frontend.mjs",
+    "prepare:local": "node scripts/build-local.mjs",
+    "pack": "node scripts/build-local.mjs && node scripts/prepare-frontend.mjs && electron-builder --dir --win",
+    "dist": "node scripts/validate-release.mjs && pnpm -C ../frontend run build && node scripts/build-local.mjs && node scripts/prepare-frontend.mjs && node scripts/build-installer.mjs"
+  },
+  "devDependencies": {
+    "electron": "^39.0.0",
+    "electron-builder": "^26.0.0",
+    "esbuild": "^0.25.12"
+  },
+  "build": {
+    "appId": "pe.jorgemotors.inventory",
+    "productName": "Jorge Motors",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.mjs",
+      "auth.mjs",
+      "offline-grant.mjs",
+      "device-identity.mjs",
+      "api-proxy.mjs",
+      "uninstall-review.mjs",
+      "local-runtime.mjs",
+      "preload.cjs",
+      "auth-config.json",
+      "static-server.mjs",
+      "build/icon.ico",
+      "frontend/**/*"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "deleteAppDataOnUninstall": false,
+      "include": "build/installer.nsh",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "uninstallDisplayName": "Jorge Motors"
+    }
+  },
+  "dependencies": {
+    "@azure/msal-node": "^7.2.0",
+    "jose": "^6.2.15"
+  }
+}

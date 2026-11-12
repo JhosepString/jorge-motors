@@ -1,4 +1,25 @@
 import { SessionRequired } from './api';
+declare global {
+  interface Window {
+    jorgeDesktop?: {
+      state(): Promise<{ configured: boolean; signedIn: boolean; offlineAuthorized: boolean;
+        offlineProfile: { id: number; nombres: string; rol: 'ADMINISTRADOR' | 'MECANICO' } | null;
+        apiBaseUrl: string | null }>;
+      signIn(): Promise<unknown>;
+      apiRequest(input: { path: string; method: string; headers: Record<string, string>;
+        body?: string | Uint8Array }): Promise<{ status: number; headers: Record<string, string>; body: Uint8Array }>;
+      signOut(): Promise<unknown>;
+      localStatus(): Promise<{ ready: boolean; profile: { id: number; nombres: string; rol: 'ADMINISTRADOR' | 'MECANICO' } | null;
+        online: boolean; pending: number }>;
+      localInventory(): Promise<Array<{ id: number; sku: string; name: string; confirmedStock: number;
+        offlineQuota: number; stockMinimum: number }>>;
+      localOperations(): Promise<Array<{ operationId: string; status: 'PENDING' | 'REJECTED'; error: string | null;
+        type: 'ENTRADA' | 'SALIDA'; quantity: number; reason: string; createdAt: string; sku: string; name: string }>>;
+      localMove(input: { productId: number; type: 'SALIDA' | 'ENTRADA'; quantity: number; reason: string }): Promise<{ id: string }>;
+      syncNow(): Promise<{ confirmed: number; rejected: number; remaining: number; stopped: boolean }>;
+    };
+  }
+}
 export interface Session {
   configured: boolean;
   hasAccount(): boolean;
@@ -8,6 +29,20 @@ export interface Session {
 }
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export async function createSession(env: Record<string, string | undefined>): Promise<Session> {
+  if (window.jorgeDesktop) {
+    const desktop = window.jorgeDesktop;
+    const state = await desktop.state();
+    return {
+      configured: state.configured,
+      hasAccount: () => state.signedIn,
+      token: async () => {
+        if (!(await desktop.state()).signedIn) throw new SessionRequired();
+        return 'desktop-session';
+      },
+      async signIn() { await desktop.signIn(); window.location.reload(); },
+      async signOut() { await desktop.signOut(); window.location.reload(); },
+    };
+  }
   const tenant = env.VITE_ENTRA_TENANT_ID;
   const clientId = env.VITE_ENTRA_SPA_CLIENT_ID;
   const apiId = env.VITE_ENTRA_API_CLIENT_ID;

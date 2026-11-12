@@ -16,6 +16,7 @@ import { supplierRouter } from './modules/compras/presentation/supplier.routes.j
 import { invoiceRouter } from './modules/compras/presentation/invoice.routes.js';
 import { attachmentRouter } from './modules/compras/presentation/attachment.routes.js';
 import { reportRouter } from './modules/reportes/presentation/report.routes.js';
+import { syncRouter } from './modules/inventario/presentation/sync.routes.js';
 
 export function createApp(config: AppConfig, logger: Logger = consoleLogger, services: BackendServices = unconfiguredServices()) {
   const app = express();
@@ -24,7 +25,7 @@ export function createApp(config: AppConfig, logger: Logger = consoleLogger, ser
   // Chain of Responsibility: orden explícito y responsabilidades independientes.
   app.use(requestContext(logger));
   app.use((req, res, next) => {
-    res.locals.auditRequired = req.path.startsWith('/api/v1/inventario') || req.path.startsWith('/api/v1/catalogo') || req.path.startsWith('/api/v1/compras') || req.path.startsWith('/api/v1/reportes') || req.path === '/api/v1/auth/me';
+    res.locals.auditRequired = req.path.startsWith('/api/v1/inventario') || req.path.startsWith('/api/v1/catalogo') || req.path.startsWith('/api/v1/compras') || req.path.startsWith('/api/v1/reportes') || req.path.startsWith('/api/v1/auth/') || req.path.startsWith('/api/v1/sync');
     next();
   });
   app.use(helmet());
@@ -40,8 +41,9 @@ export function createApp(config: AppConfig, logger: Logger = consoleLogger, ser
     exposedHeaders: ['X-Request-Id', 'ETag', 'Content-Disposition', 'Retry-After'],
   }));
   app.use(express.json({ limit: '64kb' }));
-  app.use('/api/v1', createHealthRouter());
+  app.use('/api/v1', createHealthRouter(services));
   app.use('/api/v1/auth', authRouter(services));
+  app.use('/api/v1/sync', syncRouter(services));
   app.use('/api/v1/inventario', inventoryRouter(services));
   app.use('/api/v1/catalogo', catalogRouter(services));
   app.use('/api/v1/compras/proveedores', supplierRouter(services));

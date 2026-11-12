@@ -10,17 +10,21 @@ import './styles.css';
 import { createSession } from './core/session';
 import { ApiClient } from './core/api';
 import { Application } from './Application';
+import { OfflineWorkspace } from './OfflineWorkspace';
+import { desktopTransport } from './core/desktop-transport';
 const root = createRoot(document.getElementById('root')!);
 async function start() {
   try {
     const session = await createSession(import.meta.env);
-    const api = new ApiClient(import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:3000/api/v1', () =>
-      session.token(),
-    );
+    const desktop = window.jorgeDesktop ? await window.jorgeDesktop.state() : null;
+    const apiBaseUrl = desktop?.apiBaseUrl ?? import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:3000/api/v1';
+    const api = new ApiClient(apiBaseUrl, () => session.token(),
+      window.jorgeDesktop && desktop?.apiBaseUrl ? desktopTransport(apiBaseUrl, window.jorgeDesktop) : fetch);
     root.render(
       <React.StrictMode>
         <BrowserRouter>
-          <Application session={session} api={api} />
+          {desktop?.offlineAuthorized && !desktop.signedIn
+            ? <OfflineWorkspace /> : <Application session={session} api={api} />}
         </BrowserRouter>
       </React.StrictMode>,
     );
@@ -29,8 +33,9 @@ async function start() {
       <main className="startup">
         <h1>Jorge Motors</h1>
         <p role="alert">
-          No se pudo preparar el acceso. Revise la configuración pública del frontend y el retorno SPA. No
-          comparta contraseñas ni tokens.
+          {window.jorgeDesktop
+            ? 'No se pudo preparar el acceso local. Cierre y vuelva a abrir Jorge Motors.'
+            : 'No se pudo preparar el acceso. Revise la configuración pública del frontend y el retorno SPA.'}
         </p>
         <button onClick={() => window.location.reload()}>Volver a intentar</button>
       </main>,

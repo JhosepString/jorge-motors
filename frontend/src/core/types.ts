@@ -18,6 +18,7 @@ export interface Stock {
   nombre: string;
   categoriaId: number;
   categoria: string;
+  tipo?: 'REPUESTO' | 'HERRAMIENTA' | 'CONSUMIBLE';
   stockActual: number;
   stockMinimo: number;
 }

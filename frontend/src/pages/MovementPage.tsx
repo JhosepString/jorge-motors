@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ApiClient, ApiError, errorText, MovementIntent, stockStatus } from '../core/api';
 import type { Movement, Page, Profile, Stock } from '../core/types';
@@ -6,14 +6,19 @@ import { Badge, Empty, Loading, Notice, PageHeading, Pager, useLoad } from '../u
 export function MovementPage({ api, profile }: { api: ApiClient; profile: Profile }) {
   const admin = profile.rol === 'ADMINISTRADOR';
   const [params] = useSearchParams();
-  const [search, setSearch] = useState('');
-  const [applied, setApplied] = useState('');
+  const [search, setSearch] = useState(params.get('sku') ?? '');
+  const [applied, setApplied] = useState(params.get('sku') ?? '');
+  useEffect(() => {
+    const timer = window.setTimeout(() => setApplied(search.trim()), 300);
+    return () => window.clearTimeout(timer);
+  }, [search]);
   const products = useLoad(
-    () =>
-      api.json<Page<Stock>>('/inventario/stock?' + new URLSearchParams({ limite: '100', buscar: applied })),
+    () => applied.length < 2
+      ? Promise.resolve({ data: [], siguiente: null } as Page<Stock>)
+      : api.json<Page<Stock>>('/inventario/stock?' + new URLSearchParams({ limite: '20', buscar: applied })),
     [api, applied],
   );
-  const [productId, setProductId] = useState(params.get('producto') ?? '');
+  const [selected, setSelected] = useState<Stock | null>(null);
   const [kind, setKind] = useState<'entradas' | 'salidas'>('salidas');
   const [quantity, setQuantity] = useState('1');
   const [reason, setReason] = useState('');
@@ -24,13 +29,13 @@ export function MovementPage({ api, profile }: { api: ApiClient; profile: Profil
   const [error, setError] = useState('');
   const [result, setResult] = useState<{ data: Movement; repetido: boolean }>();
   const [uncertain, setUncertain] = useState(false);
-  const selected = products.data?.data.find((p) => p.id === Number(productId));
+  const showingResults = search.trim().length >= 2 && applied === search.trim();
   const units = Number(quantity);
   const validUnits = /^[1-9][0-9]*$/.test(quantity) && units <= 2147483647;
   const finalStock =
     selected && validUnits ? selected.stockActual + (kind === 'entradas' ? units : -units) : undefined;
   const invalid =
-    !selected || !validUnits || finalStock === undefined || finalStock < 0 || finalStock > 2147483647;
+    !selected || (kind === 'salidas' && selected.tipo === 'HERRAMIENTA') || !validUnits || finalStock === undefined || finalStock < 0 || finalStock > 2147483647;
   async function submit(event: FormEvent) {
     event.preventDefault();
     if (pending.current || invalid) return;
@@ -38,7 +43,7 @@ export function MovementPage({ api, profile }: { api: ApiClient; profile: Profil
     setBusy(true);
     setError('');
     const body = {
-      productoId: Number(productId),
+      productoId: selected!.id,
       cantidad: units,
       motivo: reason.trim(),
       ...(reference.trim() ? { referencia: reference.trim() } : {}),
@@ -109,6 +114,7 @@ export function MovementPage({ api, profile }: { api: ApiClient; profile: Profil
                 setReason('');
                 setReference('');
                 setQuantity('1');
+                setSelected(null);
               }}
             >
               Registrar otro movimiento
@@ -127,29 +133,44 @@ export function MovementPage({ api, profile }: { api: ApiClient; profile: Profil
         <section className="panel form-panel">
           <h2>{admin ? 'Nuevo movimiento' : 'Datos de la salida'}</h2>
           <p>El sistema valida que haya suficientes unidades.</p>
-          <form
-            className="inline-search"
-            onSubmit={(e) => {
-              e.preventDefault();
-              setApplied(search);
-            }}
-          >
+          <div className="inline-search">
             <label>
-              Buscar repuesto
+              Buscar repuesto por SKU o nombre
               <input
                 disabled={busy || uncertain}
                 value={search}
                 maxLength={100}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Nombre o SKU"
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setSelected(null);
+                }}
+                placeholder="Escribe al menos 2 caracteres"
+                autoComplete="off"
               />
             </label>
-            <button className="secondary" disabled={busy || uncertain}>
-              Buscar
-            </button>
-          </form>
-          {products.loading && <Loading />}
-          {products.error && <Notice danger>{products.error}</Notice>}
+          </div>
+          {search.trim().length < 2 && <p>Escribe el código o parte del nombre para encontrar un producto.</p>}
+          {showingResults && products.loading && <Loading />}
+          {showingResults && products.error && <Notice danger>{products.error}</Notice>}
+          {showingResults && !products.loading && !products.error && (
+            <div className="product-results" aria-label="Productos encontrados">
+              {products.data?.data.map((p) => (
+                <button
+                  type="button"
+                  key={p.id}
+                  className={`product-result${selected?.id === p.id ? ' is-selected' : ''}`}
+                  aria-pressed={selected?.id === p.id}
+                  disabled={busy || uncertain || (kind === 'salidas' && p.tipo === 'HERRAMIENTA')}
+                  onClick={() => setSelected(p)}
+                >
+                  <span><strong>{p.nombre}</strong><small className="sku">{p.sku}{p.tipo === 'HERRAMIENTA' ? ' · Requiere préstamo' : ''}</small></span>
+                  <span className="quantity">{p.stockActual} unidades</span>
+                </button>
+              ))}
+              {!products.data?.data.length && <p>No hay productos para esa búsqueda.</p>}
+              {products.data?.siguiente != null && <small>Hay más resultados. Escribe más del SKU o del nombre.</small>}
+            </div>
+          )}
           <form className="stack" onSubmit={(e) => void submit(e)}>
             <fieldset disabled={busy || uncertain}>
               {admin && (
@@ -161,24 +182,11 @@ export function MovementPage({ api, profile }: { api: ApiClient; profile: Profil
                   </select>
                 </label>
               )}
-              <label>
-                Producto
-                <select
-                  required
-                  value={selected ? productId : ''}
-                  onChange={(e) => setProductId(e.target.value)}
-                >
-                  <option value="">Seleccionar producto</option>
-                  {products.data?.data.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.nombre} · {p.sku} · stock {p.stockActual}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              {products.data?.siguiente !== null && products.data?.siguiente !== undefined && (
-                <small>Hay más de 100 coincidencias. Busca por nombre o SKU para acotar.</small>
-              )}
+              <p className="selected-product">
+                {selected ? <>Producto seleccionado: <strong>{selected.nombre}</strong> · {selected.sku}</> : 'Selecciona un producto de los resultados.'}
+              </p>
+              {selected?.tipo === 'HERRAMIENTA' && kind === 'salidas' &&
+                <Notice danger>Las herramientas no pueden salir como consumo. Requieren préstamo y devolución.</Notice>}
               <div className="field-row">
                 <label>
                   Cantidad

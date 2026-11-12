@@ -1,0 +1,7 @@
+CREATE TABLE jm.dispositivo_registrado (
+    device_id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+    tenant_id UNIQUEIDENTIFIER NOT NULL,
+    public_key VARCHAR(512) NOT NULL,
+    activo BIT NOT NULL DEFAULT 1,
+    creado_en DATETIME2(3) NOT NULL DEFAULT SYSUTCDATETIME()
+);

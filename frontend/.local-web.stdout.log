@@ -3,3 +3,20 @@
 
   ➜  Local:   http://localhost:5173/
   ➜  press h + enter to show help
+1:29:24 a. m. [vite] (client) page reload src/core/session.ts
+1:29:24 a. m. [vite] (client) page reload src/main.tsx
+10:21:27 a. m. [vite] (client) page reload src/core/session.ts
+10:22:14 a. m. [vite] (client) hmr update /src/Application.tsx
+10:22:14 a. m. [vite] (client) page reload src/main.tsx
+10:22:15 a. m. [vite] (client) hmr update /src/Application.tsx
+10:22:15 a. m. [vite] (client) page reload src/main.tsx
+10:22:22 a. m. [vite] (client) hmr update /src/styles.css
+10:22:23 a. m. [vite] (client) hmr update /src/styles.css
+11:06:22 a. m. [vite] (client) hmr update /src/Application.tsx
+11:06:22 a. m. [vite] (client) hmr update /src/styles.css
+11:10:18 a. m. [vite] (client) page reload src/core/session.ts
+11:10:18 a. m. [vite] (client) page reload src/main.tsx
+3:57:09 p. m. [vite] (client) hmr update /src/Application.tsx
+3:57:09 p. m. [vite] (client) page reload src/main.tsx
+4:00:47 p. m. [vite] (client) hmr update /src/Application.tsx
+4:00:48 p. m. [vite] (client) hmr update /src/Application.tsx

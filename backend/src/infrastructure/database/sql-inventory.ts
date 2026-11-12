@@ -73,7 +73,7 @@ export function inventoryRepositories(transaction: sql.Transaction, driver: SqlD
       async obtenerParaMovimiento(id) {
         const result = await transaction.request().input('id', driver.Int, id)
           .query<ProductoInventario>(`SELECT CONVERT(int, p.id) AS id, p.activo, s.cantidad_actual AS stockActual,
-            p.stock_minimo AS stockMinimo, p.sku, p.nombre
+            p.stock_minimo AS stockMinimo, p.sku, p.nombre, p.tipo
             FROM jm.producto AS p WITH (UPDLOCK, HOLDLOCK)
             JOIN jm.stock AS s WITH (UPDLOCK, HOLDLOCK) ON s.producto_id = p.id
             WHERE p.id = @id;`);
@@ -86,7 +86,9 @@ export function inventoryRepositories(transaction: sql.Transaction, driver: SqlD
           .input('product', driver.Int, productoId).input('before', driver.Int, anterior)
           .input('after', driver.Int, resultante)
           .query(`UPDATE jm.stock SET cantidad_actual = @after, ultima_actualizacion = SYSUTCDATETIME()
-            WHERE producto_id = @product AND cantidad_actual = @before AND @after >= 0;`);
+            WHERE producto_id = @product AND cantidad_actual = @before AND @after >= 0
+              AND CONVERT(bigint,@after) >= (SELECT COALESCE(SUM(CONVERT(bigint,restante)),0)
+                FROM jm.cupo_dispositivo WHERE producto_id=@product);`);
         return result.rowsAffected[0] === 1;
       },
     },

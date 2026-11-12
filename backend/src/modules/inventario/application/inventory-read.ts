@@ -7,7 +7,7 @@ export const readPageSchema = z.object({ despuesDe: int.default(0), limite: z.co
 export const stockQuerySchema = readPageSchema.extend({ buscar: z.string().trim().max(100).default(''),
   categoriaId: int.refine((n) => n > 0).optional(), estado: z.enum(['TODOS', 'BAJO_MINIMO', 'AGOTADO', 'NORMAL']).default('TODOS') });
 export const movementQuerySchema = readPageSchema.extend({ productoId: int.refine((n) => n > 0).optional() });
-export interface StockView { id: number; sku: string; nombre: string; categoriaId: number; categoria: string; stockActual: number; stockMinimo: number }
+export interface StockView { id: number; sku: string; nombre: string; categoriaId: number; categoria: string; tipo?: 'REPUESTO' | 'HERRAMIENTA' | 'CONSUMIBLE'; stockActual: number; stockMinimo: number }
 export interface MovementView { id: number; productoId: number; sku: string; nombre: string; usuarioId: number;
   tipo: 'ENTRADA' | 'SALIDA'; cantidad: number; stockAnterior: number; stockResultante: number; motivo: string; referencia: string | null; fecha: Date }
 export interface ReadRepositories {

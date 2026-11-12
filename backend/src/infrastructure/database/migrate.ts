@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import type { SqlConnection } from './sql-pool.js';
 
-export const inventoryMigrationVersions = ['001_inventory', '002_audit', '003_alerts_outbox', '004_outbox_worker', '005_catalog', '006_suppliers', '007_purchase_invoices', '008_invoice_attachments'];
+export const inventoryMigrationVersions = ['001_inventory', '002_audit', '003_alerts_outbox', '004_outbox_worker', '005_catalog', '006_suppliers', '007_purchase_invoices', '008_invoice_attachments', '009_offline_quotas', '010_devices', '011_device_revocation', '012_tool_control'];
 
 export async function migrateInventory(connection: SqlConnection): Promise<void> {
   const { pool, driver } = connection;

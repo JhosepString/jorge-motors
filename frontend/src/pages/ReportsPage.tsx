@@ -170,7 +170,7 @@ export function OverviewPage({ api }: { api: ApiClient }) {
   const low = report.data?.data.filter((r) => r.stockActual <= r.stockMinimo) ?? [];
   return (
     <>
-      <PageHeading title="Resumen operativo" subtitle="El estado del almacén, sin cifras simuladas.">
+      <PageHeading title="Resumen operativo" subtitle="Cifras de prueba del catálogo ficticio cargado en Azure SQL.">
         <Link to="/movimiento" className="primary">
           + Registrar movimiento
         </Link>

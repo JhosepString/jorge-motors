@@ -80,6 +80,8 @@ export async function registrarMovimientoEnTransaccion(input: MovimientoInput, u
   const producto = await repositories.productos.obtenerParaMovimiento(data.productoId);
   if (!producto) throw new InventoryError('PRODUCT_NOT_FOUND', 'El producto o su stock no existe.');
   if (!producto.activo) throw new InventoryError('PRODUCT_NOT_ACTIVE', 'El producto está inactivo.');
+  if (tipo === 'SALIDA' && producto.tipo === 'HERRAMIENTA')
+    throw new InventoryError('TOOL_LOAN_REQUIRED', 'Las herramientas requieren préstamo y devolución. No registre una salida común.');
   const resultante = calcularStock(producto.stockActual, data.cantidad, tipo);
   const actualizado = await repositories.stock.actualizarCondicional(producto.id, producto.stockActual, resultante);
   if (!actualizado) throw new InventoryError('STOCK_CONFLICT', 'El stock cambió; vuelva a consultar.');

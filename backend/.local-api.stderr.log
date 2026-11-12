@@ -3,3 +3,63 @@ $ node --env-file-if-exists=.env --import tsx --watch src/server.ts
 {"level":"error","event":"unhandled_request_error","requestId":"ab422ca4-ee5b-4f46-aeed-08d59bb8f523"}
 {"level":"error","event":"audit_persistence_failed","requestId":"2347947c-1636-4417-8284-52c78bffad8d","action":"HTTP_ERROR","result":"ERROR","userId":null,"tenantId":"7f1563e9-20f9-4cd2-b943-b9bfb0c0b5c5","objectId":"f621c225-8390-4d66-aec0-29eafc709d6d","entityId":null,"code":"DATABASE_UNAVAILABLE","httpStatus":503,"before":null,"after":null,"destination":"console_fallback"}
 {"level":"error","event":"audit_persistence_failed","requestId":"ab422ca4-ee5b-4f46-aeed-08d59bb8f523","action":"HTTP_ERROR","result":"ERROR","userId":null,"tenantId":"7f1563e9-20f9-4cd2-b943-b9bfb0c0b5c5","objectId":"f621c225-8390-4d66-aec0-29eafc709d6d","entityId":null,"code":"DATABASE_UNAVAILABLE","httpStatus":503,"before":null,"after":null,"destination":"console_fallback"}
+{"level":"error","event":"unhandled_request_error","requestId":"78b70f33-c20a-4b8d-8c09-8173d8e8bb93"}
+{"level":"error","event":"unhandled_request_error","requestId":"77ec5689-bc5e-48d9-9d3e-590fc7f3aaad"}
+{"level":"error","event":"audit_persistence_failed","requestId":"78b70f33-c20a-4b8d-8c09-8173d8e8bb93","action":"HTTP_ERROR","result":"ERROR","userId":null,"tenantId":"7f1563e9-20f9-4cd2-b943-b9bfb0c0b5c5","objectId":"f621c225-8390-4d66-aec0-29eafc709d6d","entityId":null,"code":"DATABASE_UNAVAILABLE","httpStatus":503,"before":null,"after":null,"destination":"console_fallback"}
+{"level":"error","event":"audit_persistence_failed","requestId":"77ec5689-bc5e-48d9-9d3e-590fc7f3aaad","action":"HTTP_ERROR","result":"ERROR","userId":null,"tenantId":"7f1563e9-20f9-4cd2-b943-b9bfb0c0b5c5","objectId":"f621c225-8390-4d66-aec0-29eafc709d6d","entityId":null,"code":"DATABASE_UNAVAILABLE","httpStatus":503,"before":null,"after":null,"destination":"console_fallback"}
+{"level":"error","event":"unhandled_request_error","requestId":"5747afa3-7548-4ffb-8e8a-4dd7fe0e4f96"}
+{"level":"error","event":"unhandled_request_error","requestId":"eefb7e85-81a3-4987-b5e9-d116e58ad4b3"}
+{"level":"error","event":"audit_persistence_failed","requestId":"5747afa3-7548-4ffb-8e8a-4dd7fe0e4f96","action":"HTTP_ERROR","result":"ERROR","userId":null,"tenantId":"7f1563e9-20f9-4cd2-b943-b9bfb0c0b5c5","objectId":"f621c225-8390-4d66-aec0-29eafc709d6d","entityId":null,"code":"DATABASE_UNAVAILABLE","httpStatus":503,"before":null,"after":null,"destination":"console_fallback"}
+{"level":"error","event":"audit_persistence_failed","requestId":"eefb7e85-81a3-4987-b5e9-d116e58ad4b3","action":"HTTP_ERROR","result":"ERROR","userId":null,"tenantId":"7f1563e9-20f9-4cd2-b943-b9bfb0c0b5c5","objectId":"f621c225-8390-4d66-aec0-29eafc709d6d","entityId":null,"code":"DATABASE_UNAVAILABLE","httpStatus":503,"before":null,"after":null,"destination":"console_fallback"}
+{"level":"error","event":"audit_persistence_failed","requestId":"ecb39f02-f4df-4894-91b9-649380e98ea8","action":"HTTP_RECHAZADA","result":"RECHAZADO","userId":null,"tenantId":null,"objectId":null,"entityId":null,"code":"TOKEN_REQUIRED","httpStatus":401,"before":null,"after":null,"destination":"console_fallback"}
+{"level":"error","event":"audit_persistence_failed","requestId":"ab5a9cdf-57ce-43ce-8080-02044389f747","action":"HTTP_RECHAZADA","result":"RECHAZADO","userId":null,"tenantId":null,"objectId":null,"entityId":null,"code":"TOKEN_REQUIRED","httpStatus":401,"before":null,"after":null,"destination":"console_fallback"}
+{"level":"error","event":"audit_persistence_failed","requestId":"a3ce870e-3cf7-42ec-b9a2-ca884fe56a62","action":"HTTP_RECHAZADA","result":"RECHAZADO","userId":null,"tenantId":null,"objectId":null,"entityId":null,"code":"TOKEN_REQUIRED","httpStatus":401,"before":null,"after":null,"destination":"console_fallback"}
+{"level":"error","event":"audit_persistence_failed","requestId":"8655eeb8-20ce-4dc6-bc73-76fb0982ab18","action":"HTTP_RECHAZADA","result":"RECHAZADO","userId":null,"tenantId":null,"objectId":null,"entityId":null,"code":"INVALID_TOKEN","httpStatus":401,"before":null,"after":null,"destination":"console_fallback"}
+{"level":"error","event":"audit_persistence_failed","requestId":"5690e22a-2bd8-4662-b2fd-d366309201bb","action":"HTTP_RECHAZADA","result":"RECHAZADO","userId":null,"tenantId":null,"objectId":null,"entityId":null,"code":"TOKEN_REQUIRED","httpStatus":401,"before":null,"after":null,"destination":"console_fallback"}
+{"level":"error","event":"audit_persistence_failed","requestId":"68617d85-8cb3-45f0-8ccd-839eaf6db9ba","action":"HTTP_RECHAZADA","result":"RECHAZADO","userId":null,"tenantId":null,"objectId":null,"entityId":null,"code":"INVALID_TOKEN","httpStatus":401,"before":null,"after":null,"destination":"console_fallback"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+node:internal/modules/package_json_reader:331
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@azure/identity' imported from C:\Users\josen\OneDrive\Documents\CURSOS\Arquitectura de software\proyecto_final\jorge-motors\backend\src\infrastructure\storage\blob-attachment-store.ts
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:331:9)
+    at packageResolve (node:internal/modules/esm/resolve:784:25)
+    at moduleResolve (node:internal/modules/esm/resolve:873:18)
+    at defaultResolve (node:internal/modules/esm/resolve:1006:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:705:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:725:38)
+    at nextStep (node:internal/modules/customization_hooks:189:26)
+    at resolveBaseSync (file:///C:/Users/josen/OneDrive/Documents/CURSOS/Arquitectura%20de%20software/proyecto_final/jorge-motors/backend/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:11092)
+    at resolveDirectorySync (file:///C:/Users/josen/OneDrive/Documents/CURSOS/Arquitectura%20de%20software/proyecto_final/jorge-motors/backend/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:12398)
+    at resolveTsPathsSync (file:///C:/Users/josen/OneDrive/Documents/CURSOS/Arquitectura%20de%20software/proyecto_final/jorge-motors/backend/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:13605) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v24.22.0
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}
+{"level":"error","event":"server_start_failed"}

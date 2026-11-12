@@ -4,6 +4,7 @@ import type { Session } from './core/session';
 import { ApiClient, errorText } from './core/api';
 import type { Profile } from './core/types';
 import { Notice, Loading } from './ui/components';
+import { OfflineWorkspace } from './OfflineWorkspace';
 const InventoryPage = lazy(() => import('./pages/InventoryPage').then((m) => ({ default: m.InventoryPage })));
 const MovementPage = lazy(() => import('./pages/MovementPage').then((m) => ({ default: m.MovementPage })));
 const HistoryPage = lazy(() => import('./pages/MovementPage').then((m) => ({ default: m.HistoryPage })));
@@ -11,6 +12,8 @@ const ReportsPage = lazy(() => import('./pages/ReportsPage').then((m) => ({ defa
 const OverviewPage = lazy(() => import('./pages/ReportsPage').then((m) => ({ default: m.OverviewPage })));
 const SuppliersPage = lazy(() => import('./pages/SuppliersPage').then((m) => ({ default: m.SuppliersPage })));
 const PurchasesPage = lazy(() => import('./pages/PurchasesPage').then((m) => ({ default: m.PurchasesPage })));
+const DevicesPage = lazy(() => import('./pages/DevicesPage').then((m) => ({ default: m.DevicesPage })));
+const UsersPage = lazy(() => import('./pages/UsersPage').then((m) => ({ default: m.UsersPage })));
 
 function Brand() {
   return (
@@ -67,8 +70,11 @@ export function Application({ session, api }: { session: Session; api: ApiClient
     setError('');
     try {
       await session.signIn();
-    } catch {
-      setError('No se pudo iniciar el acceso Microsoft. Revise el registro SPA y el retorno.');
+    } catch (cause) {
+      const diagnostic = cause instanceof Error ? cause.message.match(/JM_AUTH_[A-Z0-9_]+/)?.[0] : undefined;
+      setError(window.jorgeDesktop
+        ? `No se completó el acceso Microsoft.${diagnostic ? ` Código: ${diagnostic}.` : ' Revise la conexión y vuelva a intentarlo.'}`
+        : 'No se pudo iniciar el acceso Microsoft. Revise el registro SPA y el retorno.');
       setBusy(false);
     }
   }
@@ -167,6 +173,8 @@ export function Application({ session, api }: { session: Session; api: ApiClient
         ['/reportes', '▤', 'Reportes'],
         ['/proveedores', '⌕', 'Proveedores'],
         ['/compras', '▤', 'Compras'],
+        ['/equipos', '▣', 'Equipos'],
+        ['/usuarios', '♙', 'Usuarios'],
       ]
     : [
         ['/inventario', '⌕', 'Consultar stock'],
@@ -220,7 +228,8 @@ export function Application({ session, api }: { session: Session; api: ApiClient
             JORGE MOTORS <b>/</b> INVENTARIO TÉCNICO
           </span>
           <div>
-            <span className="environment">DEMO LOCAL</span>
+            <span className="environment">DATOS FICTICIOS · PRUEBAS</span>
+            {window.jorgeDesktop && <Link className="text-button" to="/offline">Modo local</Link>}
             <span className="avatar dark" title={name}>
               {initials}
             </span>
@@ -237,6 +246,7 @@ export function Application({ session, api }: { session: Session; api: ApiClient
                 element={admin ? <OverviewPage api={api} /> : <Navigate to="/inventario" replace />}
               />
               <Route path="/inventario" element={<InventoryPage api={api} profile={profile} />} />
+              {window.jorgeDesktop && <Route path="/offline" element={<OfflineWorkspace onlineNavigation />} />}
               <Route path="/movimiento" element={<MovementPage api={api} profile={profile} />} />
               <Route path="/historial" element={<HistoryPage api={api} profile={profile} />} />
               <Route
@@ -269,6 +279,10 @@ export function Application({ session, api }: { session: Session; api: ApiClient
                   )
                 }
               />
+              <Route path="/equipos" element={admin ? <DevicesPage api={api} /> :
+                <Notice danger>Tu rol no permite gestionar equipos.</Notice>} />
+              <Route path="/usuarios" element={admin ? <UsersPage api={api} /> :
+                <Notice danger>Tu rol no permite gestionar usuarios.</Notice>} />
               <Route
                 path="*"
                 element={

@@ -1,0 +1,7 @@
+{
+  "tenantId": "00000000-0000-0000-0000-000000000000",
+  "desktopClientId": "00000000-0000-0000-0000-000000000000",
+  "apiClientId": "00000000-0000-0000-0000-000000000000",
+  "apiBaseUrl": "https://your-api.azurewebsites.net/api/v1",
+  "offlineGrantPublicKeyPem": "-----BEGIN PUBLIC KEY-----\\n...\\n-----END PUBLIC KEY-----"
+}

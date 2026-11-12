@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { ApiClient, errorText, pen } from '../core/api';
 import type { Page, Stock, Supplier } from '../core/types';
 import { Badge, Empty, Loading, Modal, Notice, PageHeading, Pager, useLoad } from '../ui/components';
@@ -118,17 +118,27 @@ function InvoiceForm({ api, saved }: { api: ApiClient; saved: (id: number) => vo
   const suppliers = useLoad(() => api.json<Page<Supplier>>('/compras/proveedores?limite=100'), [api]);
   const [search, setSearch] = useState('');
   const [applied, setApplied] = useState('');
+  useEffect(() => {
+    const timer = window.setTimeout(() => setApplied(search.trim()), 300);
+    return () => window.clearTimeout(timer);
+  }, [search]);
   const products = useLoad(
-    () =>
-      api.json<Page<Stock>>('/inventario/stock?' + new URLSearchParams({ limite: '100', buscar: applied })),
+    () => applied.length < 2
+      ? Promise.resolve({ data: [], siguiente: null } as Page<Stock>)
+      : api.json<Page<Stock>>('/inventario/stock?' + new URLSearchParams({ limite: '20', buscar: applied })),
     [api, applied],
   );
-  const [lines, setLines] = useState([{ productoId: '', cantidad: '1', precioUnitario: '0.00' }]);
+  const [lines, setLines] = useState([{ productoId: '', productoNombre: '', cantidad: '1', precioUnitario: '0.00' }]);
+  const [activeLine, setActiveLine] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy) return;
+    if (lines.some((line) => !line.productoId)) {
+      setError('Selecciona un producto para cada línea.');
+      return;
+    }
     const f = new FormData(event.currentTarget);
     setBusy(true);
     setError('');
@@ -158,15 +168,28 @@ function InvoiceForm({ api, saved }: { api: ApiClient; saved: (id: number) => vo
     <>
       <div className="inline-search">
         <label>
-          Buscar productos para las líneas
-          <input value={search} onChange={(e) => setSearch(e.target.value)} maxLength={100} />
+          Buscar producto para la línea {activeLine + 1} por SKU o nombre
+          <input value={search} onChange={(e) => setSearch(e.target.value)} maxLength={100}
+            placeholder="Escribe al menos 2 caracteres" autoComplete="off" />
         </label>
-        <button className="secondary" onClick={() => setApplied(search)}>
-          Buscar
-        </button>
       </div>
       {suppliers.error && <Notice danger>{suppliers.error}</Notice>}
-      {products.error && <Notice danger>{products.error}</Notice>}
+      {search.trim().length >= 2 && applied === search.trim() && products.loading && <Loading />}
+      {search.trim().length >= 2 && applied === search.trim() && products.error && <Notice danger>{products.error}</Notice>}
+      {search.trim().length >= 2 && applied === search.trim() && !products.loading && !products.error && (
+        <div className="product-results" aria-label="Productos encontrados">
+          {products.data?.data.map((product) => (
+            <button key={product.id} type="button" className="product-result" disabled={busy}
+              onClick={() => setLines(lines.map((line, index) => index === activeLine
+                ? { ...line, productoId: String(product.id), productoNombre: `${product.nombre} · ${product.sku}` } : line))}>
+              <span><strong>{product.nombre}</strong><small className="sku">{product.sku}</small></span>
+              <span className="quantity">{product.stockActual} unidades</span>
+            </button>
+          ))}
+          {!products.data?.data.length && <p>No hay productos para esa búsqueda.</p>}
+          {products.data?.siguiente != null && <small>Hay más resultados. Escribe más del SKU o del nombre.</small>}
+        </div>
+      )}
       {suppliers.data?.siguiente !== null && suppliers.data?.siguiente !== undefined && (
         <Notice>
           Se muestran los primeros 100 proveedores. Para otros proveedores usa el cliente CLI hasta incorporar
@@ -207,26 +230,13 @@ function InvoiceForm({ api, saved }: { api: ApiClient; saved: (id: number) => vo
           <h3>Líneas del documento</h3>
           {lines.map((line, i) => (
             <div className="invoice-line" key={i}>
-              <label>
-                Producto
-                <select
-                  required
-                  value={line.productoId}
-                  onChange={(e) =>
-                    setLines(lines.map((l, j) => (j === i ? { ...l, productoId: e.target.value } : l)))
-                  }
-                >
-                  <option value="">Seleccionar producto</option>
-                  {line.productoId && !products.data?.data.some((p) => String(p.id) === line.productoId) && (
-                    <option value={line.productoId}>Producto seleccionado #{line.productoId}</option>
-                  )}
-                  {products.data?.data.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.nombre} · {p.sku}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <div>
+                <span>Producto · línea {i + 1}</span>
+                <button type="button" className="secondary" aria-label={`Elegir producto para línea ${i + 1}`}
+                  onClick={() => { setActiveLine(i); setSearch(''); }}>
+                  {line.productoNombre || 'Buscar producto'}
+                </button>
+              </div>
               <label>
                 Cantidad
                 <input
@@ -257,7 +267,7 @@ function InvoiceForm({ api, saved }: { api: ApiClient; saved: (id: number) => vo
                 type="button"
                 className="text-button"
                 disabled={lines.length === 1}
-                onClick={() => setLines(lines.filter((_, j) => j !== i))}
+                onClick={() => { setLines(lines.filter((_, j) => j !== i)); setActiveLine(0); }}
                 aria-label={`Quitar línea ${i + 1}`}
               >
                 ✕
@@ -268,7 +278,11 @@ function InvoiceForm({ api, saved }: { api: ApiClient; saved: (id: number) => vo
             type="button"
             className="secondary"
             disabled={lines.length >= 50}
-            onClick={() => setLines([...lines, { productoId: '', cantidad: '1', precioUnitario: '0.00' }])}
+            onClick={() => {
+              setActiveLine(lines.length);
+              setSearch('');
+              setLines([...lines, { productoId: '', productoNombre: '', cantidad: '1', precioUnitario: '0.00' }]);
+            }}
           >
             + Añadir línea
           </button>

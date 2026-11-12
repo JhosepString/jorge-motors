@@ -25,7 +25,7 @@ async function fixture(
   role = 'ADMINISTRADOR',
   options: { failMovementOnce?: boolean; staleProduct?: boolean; failReceiptOnce?: boolean } = {},
 ) {
-  const calls: { path: string; method: string; key: string | undefined; body: unknown }[] = [];
+  const calls: { path: string; query: string; method: string; key: string | undefined; body: unknown }[] = [];
   let movementCalls = 0;
   let receiptCalls = 0;
   let invoiceCreated = false;
@@ -57,6 +57,7 @@ async function fixture(
     const path = url.pathname.replace('/api/v1', '');
     calls.push({
       path,
+      query: url.search,
       method: req.method(),
       key: req.headers()['idempotency-key'],
       body: req.headers()['content-type']?.includes('application/json') ? req.postDataJSON() : null,
@@ -80,6 +81,11 @@ async function fixture(
           rol: role,
         },
       });
+    if (path === '/auth/users') {
+      if (req.method() === 'POST') return send({ data: { id: 3, ...req.postDataJSON() } }, 201);
+      return send({ data: [{ id: 1, objectId: '11111111-1111-4111-8111-111111111111',
+        nombres: 'Administrador Demo', rol: 'ADMINISTRADOR', activo: true }] });
+    }
     if (path === '/inventario/stock')
       return send({
         data: stock.filter((p) =>
@@ -221,6 +227,17 @@ test('Acceso real sin configuración: no pide contraseñas ni ofrece bypass', as
   await expect(page.locator('input[type=password]')).toHaveCount(0);
   await page.screenshot({ path: 'test-results/acceso.png', fullPage: true });
 });
+test('Administrador registra perfil y muestra los pasos de Entra', async ({ page }) => {
+  const calls = await fixture(page);
+  await page.getByRole('link', { name: 'Usuarios' }).click();
+  await expect(page.getByRole('heading', { name: 'Usuarios' })).toBeVisible();
+  await expect(page.getByText('Primero crea la cuenta en Microsoft Entra')).toBeVisible();
+  await page.getByLabel('Id. de objeto de Microsoft Entra').fill('22222222-2222-4222-8222-222222222222');
+  await page.getByLabel('Nombre para mostrar').fill('Mecánico Prueba');
+  await page.getByRole('button', { name: 'Guardar perfil' }).click();
+  await expect(page.getByText('Perfil registrado.')).toBeVisible();
+  expect(calls.some((call) => call.path === '/auth/users' && call.method === 'POST')).toBe(true);
+});
 test('Administrador: navegación, inventario, formulario versionado y error 412 visible', async ({ page }) => {
   const calls = await fixture(page, 'ADMINISTRADOR', { staleProduct: true });
   await page.getByRole('link', { name: 'Inventario', exact: true }).click();
@@ -239,7 +256,8 @@ test('Mecánico: sin precios/reportes/entradas; salida conserva clave al reinten
   await expect(page.getByRole('heading', { name: 'Consulta de stock' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Reportes', exact: true })).toHaveCount(0);
   await page.getByRole('link', { name: 'Registrar salida', exact: true }).click();
-  await page.getByRole('combobox', { name: 'Producto', exact: true }).selectOption('1');
+  await page.getByLabel('Buscar repuesto por SKU o nombre').fill('FIL-001');
+  await page.getByRole('button', { name: /Filtro de aceite.*FIL-001/ }).click();
   await page.getByLabel('Cantidad', { exact: true }).fill('1');
   await page.getByLabel('Motivo', { exact: true }).fill('Uso en prueba aislada');
   await page.getByRole('button', { name: 'Confirmar salida' }).click();
@@ -253,10 +271,24 @@ test('Mecánico: sin precios/reportes/entradas; salida conserva clave al reinten
   expect(sent[0]!.body).not.toHaveProperty('referencia');
   expect(calls.some((r) => r.path === '/inventario/entradas')).toBe(false);
 });
+test('Movimiento: busca en el servidor sin cargar un desplegable completo', async ({ page }) => {
+  const calls = await fixture(page, 'MECANICO');
+  await page.getByRole('link', { name: 'Registrar salida', exact: true }).click();
+  expect(calls.filter((r) => r.path === '/inventario/stock')).toHaveLength(0);
+  await page.getByLabel('Buscar repuesto por SKU o nombre').fill('FIL-001');
+  await expect(page.getByRole('button', { name: /Filtro de aceite.*FIL-001/ })).toBeVisible();
+  const searches = calls.filter((r) => r.path === '/inventario/stock');
+  expect(searches).toHaveLength(1);
+  expect(new URLSearchParams(searches[0]!.query).get('limite')).toBe('20');
+  expect(new URLSearchParams(searches[0]!.query).get('buscar')).toBe('FIL-001');
+  await page.getByRole('button', { name: /Filtro de aceite.*FIL-001/ }).click();
+  await expect(page.getByText('Producto seleccionado:')).toContainText('DEMO-FIL-001');
+});
 test('Salida: cantidad mayor al saldo bloquea confirmación sin tocar API', async ({ page }) => {
   const calls = await fixture(page, 'MECANICO');
   await page.getByRole('link', { name: 'Registrar salida', exact: true }).click();
-  await page.getByRole('combobox', { name: 'Producto', exact: true }).selectOption('1');
+  await page.getByLabel('Buscar repuesto por SKU o nombre').fill('FIL-001');
+  await page.getByRole('button', { name: /Filtro de aceite.*FIL-001/ }).click();
   await page.getByLabel('Cantidad', { exact: true }).fill('5');
   await page.getByLabel('Motivo', { exact: true }).fill('Demostración');
   await expect(page.getByRole('button', { name: 'Confirmar salida' })).toBeDisabled();
@@ -312,7 +344,8 @@ test('Compras: crear borrador PEN, revisar y reintentar recepción con la misma 
   await page.getByRole('combobox', { name: 'Proveedor', exact: true }).selectOption('1');
   await page.getByLabel('Número de documento', { exact: true }).fill('F001-123');
   await page.getByLabel('Fecha', { exact: true }).fill('2026-10-21');
-  await page.getByRole('combobox', { name: 'Producto', exact: true }).selectOption('1');
+  await page.getByLabel('Buscar producto para la línea 1 por SKU o nombre').fill('FIL-001');
+  await page.getByRole('button', { name: /Filtro de aceite.*FIL-001/ }).click();
   await page.getByLabel('Cantidad', { exact: true }).fill('2');
   await page.getByLabel('Precio final PEN', { exact: true }).fill('25.50');
   await page.getByRole('button', { name: 'Guardar borrador' }).click();

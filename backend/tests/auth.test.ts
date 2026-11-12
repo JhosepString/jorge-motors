@@ -12,16 +12,34 @@ import type { InventarioFacade } from '../src/modules/inventario/application/inv
 import type { BackendServices } from '../src/services.js';
 import { tenantId, apiId, objectId, signTestToken, testVerifier } from './helpers/entra-fixture.js';
 
-function fixture(options: { profile?: Partial<UserProfile>; missingProfile?: boolean; auditFails?: boolean } = {}) {
+function fixture(options: { profile?: Partial<UserProfile>; missingProfile?: boolean; auditFails?: boolean; offlineGrant?: boolean; sync?: boolean } = {}) {
   const audit: AuditEvent[] = [];
   const logs: Record<string, unknown>[] = [];
   let lookups = 0;
   let operations = 0;
+  let userCreates = 0;
   const profile: UserProfile = {
     id: 7, nombres: 'Empleado ficticio', rol: 'ADMINISTRADOR', activo: true,
     entraTenantId: tenantId, entraObjectId: objectId, ...options.profile,
   };
   const services: BackendServices = {
+    ...(options.offlineGrant ? { offlineGrant: async (deviceId: string) => `signed:${deviceId}` } : {}),
+    ...(options.sync ? { sync: async () => ({
+      assignQuota: async () => 2,
+      bootstrap: async (input: { deviceId: string }) => ({ deviceId: input.deviceId, user: profile,
+        products: [], nextAfter: null }),
+      accept: async (operation: { operationId: string }) => ({ operationId: operation.operationId, status: 'CONFIRMED', remoteId: 9 }),
+    } as unknown as Awaited<ReturnType<NonNullable<BackendServices['sync']>>>) } : {}),
+    devices: async () => ({
+      register: async () => undefined,
+      assertRegistered: async () => 'test-key',
+      assertProof: async () => undefined,
+    } as unknown as Awaited<ReturnType<NonNullable<BackendServices['devices']>>>),
+    users: async () => ({
+      list: async () => [{ id: 7, objectId, nombres: 'Empleado ficticio', rol: 'ADMINISTRADOR', activo: true }],
+      create: async (_actor: unknown, input: Record<string, unknown>) => { userCreates++; return { id: 8, ...input }; },
+      update: async () => { throw new Error('No se usa en esta prueba.'); },
+    } as unknown as Awaited<ReturnType<NonNullable<BackendServices['users']>>>),
     inventoryRead: async () => { throw new Error('No se usan lecturas aquí.'); },
     reports: async () => { throw new Error('No se usan reportes en estas pruebas.'); },
     attachments: async () => { throw new Error('No se usan adjuntos en estas pruebas.'); },
@@ -43,9 +61,70 @@ function fixture(options: { profile?: Partial<UserProfile>; missingProfile?: boo
   const app = createApp(parseEnvironment({ NODE_ENV: 'test' }), {
     info: (entry) => logs.push(entry), error: (entry) => logs.push(entry),
   }, services);
-  return { app, audit, logs, operations: () => operations, lookups: () => lookups };
+  return { app, audit, logs, operations: () => operations, lookups: () => lookups, userCreates: () => userCreates };
 }
 const body = { productoId: 1, cantidad: 2, motivo: 'Uso en taller' };
+
+test('offline grant requires verified active profile and valid device ID', async () => {
+  const deviceId = randomUUID();
+  const token = await signTestToken();
+  const allowed = fixture({ offlineGrant: true });
+  const issued = await request(allowed.app).post('/api/v1/auth/offline-grant')
+    .auth(token, { type: 'bearer' }).set(proofHeaders(deviceId)).send({ deviceId }).expect(200);
+  assert.equal(issued.body.data.grant, `signed:${deviceId}`);
+  assert.equal(allowed.audit.at(-1)?.code, 'OFFLINE_GRANT_ISSUED');
+  await request(allowed.app).post('/api/v1/auth/offline-grant')
+    .auth(token, { type: 'bearer' }).send({ deviceId: 'invalid' }).expect(400);
+  await request(fixture({ offlineGrant: true, profile: { activo: false } }).app)
+    .post('/api/v1/auth/offline-grant').auth(token, { type: 'bearer' }).send({ deviceId }).expect(403);
+  await request(fixture().app).post('/api/v1/auth/offline-grant')
+    .auth(token, { type: 'bearer' }).send({ deviceId }).expect(503);
+});
+
+test('usuarios: solo administrador puede registrar perfiles con ID de Entra válido', async () => {
+  const admin = fixture();
+  const token = await signTestToken();
+  await request(admin.app).post('/api/v1/auth/users').auth(token, { type: 'bearer' })
+    .send({ objectId: 'mal', nombres: 'Demo', rol: 'MECANICO', activo: true }).expect(400);
+  assert.equal(admin.userCreates(), 0);
+  await request(admin.app).post('/api/v1/auth/users').auth(token, { type: 'bearer' })
+    .send({ objectId: randomUUID(), nombres: 'Mecánico Demo', rol: 'MECANICO', activo: true }).expect(201);
+  assert.equal(admin.userCreates(), 1);
+  const mechanic = fixture({ profile: { rol: 'MECANICO' } });
+  await request(mechanic.app).post('/api/v1/auth/users')
+    .auth(await signTestToken({ roles: ['Mecanico'] }), { type: 'bearer' })
+    .send({ objectId: randomUUID(), nombres: 'Otro', rol: 'ADMINISTRADOR', activo: true }).expect(403);
+  assert.equal(mechanic.userCreates(), 0);
+});
+
+test('sync endpoints require role, token and strict operation payload', async () => {
+  const app = fixture({ sync: true }).app;
+  const token = await signTestToken();
+  const deviceId = randomUUID();
+  const operationId = randomUUID();
+  const bootstrap = await request(app).get('/api/v1/sync/bootstrap').query({ deviceId })
+    .auth(token, { type: 'bearer' }).set(proofHeaders(deviceId)).expect(200);
+  assert.equal(bootstrap.body.data.deviceId, deviceId);
+  await request(app).get('/api/v1/sync/bootstrap').query({ deviceId: 'bad' })
+    .auth(token, { type: 'bearer' }).expect(400);
+  await request(app).post('/api/v1/sync/operations').send({}).expect(401);
+  await request(app).post('/api/v1/sync/operations').auth(token, { type: 'bearer' })
+    .send({ operationId, deviceId, kind: 'INVENTORY_MOVEMENT', payload: { productId: 1 } }).expect(400);
+  const accepted = await request(app).post('/api/v1/sync/operations').auth(token, { type: 'bearer' })
+    .set(proofHeaders(deviceId))
+    .send({ operationId, deviceId, kind: 'INVENTORY_MOVEMENT', payload: { productId: 1,
+      type: 'SALIDA', quantity: 1, reason: 'Taller', reference: null, idempotencyKey: randomUUID() } }).expect(200);
+  assert.equal(accepted.body.data.remoteId, 9);
+  const mechanic = fixture({ sync: true, profile: { rol: 'MECANICO' } }).app;
+  const mechanicToken = await signTestToken({ roles: ['Mecanico'] });
+  await request(mechanic).post('/api/v1/sync/quotas').auth(mechanicToken, { type: 'bearer' })
+    .send({ allocationId: randomUUID(), deviceId, productId: 1, quantity: 1 }).expect(403);
+});
+
+function proofHeaders(deviceId: string) {
+  return { 'X-Device-Id': deviceId, 'X-Device-Time': String(Date.now()),
+    'X-Device-Nonce': randomUUID(), 'X-Device-Signature': 'test-signature' };
+}
 
 test('sin Bearer se responde 401 y se audita sin atribuir identidad', async () => {
   const f = fixture();

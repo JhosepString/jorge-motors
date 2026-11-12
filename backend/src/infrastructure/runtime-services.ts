@@ -1,6 +1,7 @@
 import type { BackendServices } from '../services.js';
 import { AppError } from '../shared/app-error.js';
 import { createEntraVerifier, parseEntraSettings } from '../modules/auth/infrastructure/entra.js';
+import { createOfflineGrantSigner } from '../modules/auth/application/offline-grant.js';
 import type { UserProfile } from '../modules/auth/application/contracts.js';
 import { InventarioFacade } from '../modules/inventario/application/inventario.facade.js';
 import { SqlPoolSingleton } from './database/sql-pool.js';
@@ -24,6 +25,9 @@ import { SqlReportUnitOfWork } from './database/sql-reports.js';
 import { ExcelInventoryStrategy, PdfInventoryStrategy } from '../modules/reportes/infrastructure/report-strategies.js';
 import { InventoryReadFacade } from '../modules/inventario/application/inventory-read.js';
 import { SqlInventoryReadUnitOfWork } from './database/sql-inventory-read.js';
+import { SqlSyncService } from './database/sql-sync.js';
+import { SqlDeviceService } from './database/sql-devices.js';
+import { SqlUserManagement } from './database/sql-users.js';
 
 // Composición: ninguna conexión SQL ni consulta a Entra ocurre al crear los servicios.
 export function runtimeServices(env: NodeJS.ProcessEnv): BackendServices {
@@ -50,6 +54,14 @@ export function runtimeServices(env: NodeJS.ProcessEnv): BackendServices {
     }
   };
   return {
+    async readiness() {
+      const { pool } = await getConnection();
+      await pool.request().query('SELECT 1 AS ready;');
+    },
+    async sync() { return new SqlSyncService(await getConnection()); },
+    async devices() { return new SqlDeviceService(await getConnection()); },
+    async users() { return new SqlUserManagement(await getConnection()); },
+    ...(env.OFFLINE_GRANT_PRIVATE_KEY_PEM ? { offlineGrant: createOfflineGrantSigner(env.OFFLINE_GRANT_PRIVATE_KEY_PEM) } : {}),
     verifyToken: entra ? createEntraVerifier(entra) : async () => {
       throw new AppError(503, 'AUTH_NOT_CONFIGURED', 'Complete el registro de la API en Entra ID.');
     },

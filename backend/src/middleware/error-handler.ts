@@ -47,7 +47,7 @@ export function errorHandler(logger: Logger, audit?: AuditRepository): ErrorRequ
         INVALID_INPUT: 400, INVALID_QUANTITY: 400, PRODUCT_NOT_FOUND: 404,
         USER_NOT_ACTIVE: 403, FORBIDDEN_MOVEMENT: 403, PRODUCT_NOT_ACTIVE: 409,
         INSUFFICIENT_STOCK: 409, STOCK_LIMIT_EXCEEDED: 409, STOCK_CONFLICT: 409,
-        IDEMPOTENCY_CONFLICT: 409,
+        IDEMPOTENCY_CONFLICT: 409, NO_OFFLINE_QUOTA: 409, TOOL_LOAN_REQUIRED: 409,
       };
       failure = new AppError(statuses[error.code] ?? 500, error.code, error.message);
     } else if (error && typeof error === 'object' && 'type' in error) {

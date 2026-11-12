@@ -609,6 +609,47 @@ fieldset {
 .inline-search > label {
   flex: 1;
 }
+.product-results {
+  display: grid;
+  gap: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+  margin: 0 0 20px;
+  padding: 4px;
+}
+.product-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: white;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.product-result:hover,
+.product-result:focus-visible,
+.product-result.is-selected {
+  border-color: var(--accent);
+  background: #f8f1eb;
+}
+.product-result > span:first-child {
+  display: grid;
+  gap: 3px;
+}
+.product-result .quantity {
+  white-space: nowrap;
+}
+.selected-product {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
 .impact dl {
   margin: 15px 0 25px;
 }
@@ -1312,6 +1353,24 @@ dialog h2 {
 :root {
   --muted: #606f75;
 }
+.offline-page { max-width: 1080px; margin: 0 auto; padding: 32px; }
+.offline-page header { display: flex; justify-content: space-between; align-items: start; gap: 20px; }
+.offline-page header > div:last-child { display: flex; gap: 12px; align-items: center; }
+.offline-page table { width: 100%; border-collapse: collapse; margin: 24px 0; }
+.offline-page th, .offline-page td { padding: 12px; border-bottom: 1px solid #d8e0e3; text-align: left; }
+.offline-page > label { display: grid; gap: 6px; max-width: 500px; }
+.offline-page > label input { padding: 10px; }
+.offline-page td button[aria-pressed="true"] { font-weight: 700; text-decoration: underline; }
+.offline-page form { display: flex; flex-wrap: wrap; gap: 14px; align-items: end; }
+.offline-page form h2 { flex-basis: 100%; }
+.offline-page form label { display: grid; gap: 6px; min-width: 170px; }
+.offline-page form input, .offline-page form select { padding: 9px; }
+.device-list { display: grid; gap: 14px; margin-top: 20px; }
+.device-card { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+.device-card p { margin: 6px 0 0; overflow-wrap: anywhere; }
+.device-card strong { overflow-wrap: anywhere; }
+.device-revoke { margin-top: 20px; display: grid; gap: 14px; }
+.device-revoke label { display: grid; gap: 6px; }
 .eyebrow,
 .environment,
 .tile {

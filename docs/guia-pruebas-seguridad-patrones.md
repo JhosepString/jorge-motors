@@ -30,26 +30,33 @@ en la proyección.
 
 ## 2. Seguridad: pruebas observables sobre la API activa
 
-Ejecuta desde cualquier terminal PowerShell. Estas solicitudes no modifican
+Ejecuta desde cualquier terminal PowerShell 5.1 o posterior. Estas solicitudes no modifican
 inventario. La ruta `/health` solo prueba HTTP; las otras rutas verifican la cadena
 de seguridad y pueden escribir registros de rechazo en auditoría.
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:3000/api/v1/health
 
-$sinToken = Invoke-WebRequest http://127.0.0.1:3000/api/v1/auth/me -SkipHttpErrorCheck
-$sinToken.StatusCode
-($sinToken.Content | ConvertFrom-Json).error.code
+function Verificar-Respuesta {
+  param([string]$Ruta, [hashtable]$Cabeceras = @{})
+  try {
+    $r = Invoke-WebRequest -Uri $Ruta -Headers $Cabeceras -UseBasicParsing -ErrorAction Stop
+    $estado = [int]$r.StatusCode
+    $texto = $r.Content
+  } catch {
+    if (-not $_.Exception.Response) { throw }
+    $estado = [int]$_.Exception.Response.StatusCode
+    $texto = $_.ErrorDetails.Message
+  }
+  $dato = $texto | ConvertFrom-Json
+  [pscustomobject]@{ HTTP = $estado; Codigo = $dato.error.code }
+}
 
-$tokenFalso = Invoke-WebRequest http://127.0.0.1:3000/api/v1/auth/me `
-  -Headers @{ Authorization = 'Bearer token-invalido' } -SkipHttpErrorCheck
-$tokenFalso.StatusCode
-($tokenFalso.Content | ConvertFrom-Json).error.code
-
-$origenAjeno = Invoke-WebRequest http://127.0.0.1:3000/api/v1/health `
-  -Headers @{ Origin = 'https://example.invalid' } -SkipHttpErrorCheck
-$origenAjeno.StatusCode
-($origenAjeno.Content | ConvertFrom-Json).error.code
+Verificar-Respuesta 'http://127.0.0.1:3000/api/v1/auth/me'
+Verificar-Respuesta 'http://127.0.0.1:3000/api/v1/auth/me' `
+  @{ Authorization = 'Bearer token-invalido' }
+Verificar-Respuesta 'http://127.0.0.1:3000/api/v1/health' `
+  @{ Origin = 'https://example.invalid' }
 ```
 
 Resultados esperados y **observados en esta PC**: health `200`; sin Bearer `401 /

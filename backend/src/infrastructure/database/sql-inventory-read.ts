@@ -12,7 +12,7 @@ export class SqlInventoryReadUnitOfWork implements ReadUnitOfWork {
           return (await tx.request().input('after', d.Int, f.despuesDe).input('limit', d.Int, f.limite + 1)
             .input('search', d.NVarChar(100), f.buscar).input('category', d.Int, f.categoriaId ?? null).input('status', d.VarChar(20), f.estado)
             .query<StockView>(`SELECT TOP (@limit) CONVERT(int,p.id) AS id,p.sku,p.nombre,p.categoria_id AS categoriaId,
-              c.nombre AS categoria,s.cantidad_actual AS stockActual,p.stock_minimo AS stockMinimo
+              c.nombre AS categoria,p.tipo,s.cantidad_actual AS stockActual,p.stock_minimo AS stockMinimo
               FROM jm.producto p JOIN jm.stock s ON s.producto_id=p.id JOIN jm.categoria c ON c.id=p.categoria_id
               WHERE p.activo=1 AND p.id>@after AND (@category IS NULL OR p.categoria_id=@category)
               AND (@search=N'' OR CHARINDEX(@search,p.nombre)>0 OR CHARINDEX(@search,p.sku)>0 OR CHARINDEX(@search,c.nombre)>0)

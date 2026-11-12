@@ -17,6 +17,7 @@ export interface ProductoInventario {
   stockMinimo: number;
   sku: string;
   nombre: string;
+  tipo?: 'REPUESTO' | 'HERRAMIENTA' | 'CONSUMIBLE';
 }
 
 export interface Movimiento {

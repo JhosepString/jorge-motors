@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { randomUUID } from 'node:crypto';
+import { generateKeyPairSync, randomUUID } from 'node:crypto';
 import { after, before, test } from 'node:test';
 import { connectSql, type SqlConnection } from '../../src/infrastructure/database/sql-pool.js';
 import { parseSqlSettings } from '../../src/infrastructure/database/sql-settings.js';
@@ -16,6 +16,9 @@ import { tenantId, apiId, clientId, testVerifier, signTestToken } from '../helpe
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { inventoryEvents } from '../../src/infrastructure/inventory-events.js';
+import { SqlSyncService } from '../../src/infrastructure/database/sql-sync.js';
+import { deviceProofHeaders } from '../../src/modules/auth/application/device-proof.js';
+import type { UserProfile } from '../../src/modules/auth/application/contracts.js';
 
 // No lee .env ni acepta destinos cloud. Solo crea una base efímera en localhost.
 const databaseName = `jm_test_${randomUUID().replaceAll('-', '')}`;
@@ -107,16 +110,73 @@ test('SQL: salida e ingreso persisten saldos e historial en una transacción', a
   assert.deepEqual(await balance(id), { cantidad: 6, movimientos: 2 });
 });
 
-test('SQL: dos salidas simultáneas no dejan stock negativo', async () => {
+test('SQL: cupo reservado protege salidas online y se consume una sola vez al sincronizar', async () => {
   const id = await product(3);
+  const deviceId = randomUUID();
+  await connection!.pool.request().input('device', connection!.driver.UniqueIdentifier, deviceId)
+    .input('tenant', connection!.driver.UniqueIdentifier, tenantId)
+    .input('key', connection!.driver.VarChar(512), 'test-public-key')
+    .query('INSERT INTO jm.dispositivo_registrado(device_id,tenant_id,public_key) VALUES (@device,@tenant,@key);');
+  const service = new SqlSyncService(connection!);
+  const actorRow = await connection!.pool.request().input('id', connection!.driver.Int, administrator)
+    .query<UserProfile>(`SELECT CONVERT(int,id) AS id,nombres,rol,activo,
+      CONVERT(varchar(36),entra_tenant_id) AS entraTenantId,
+      CONVERT(varchar(36),entra_object_id) AS entraObjectId FROM jm.usuario WHERE id=@id;`);
+  const actor = actorRow.recordset[0]!;
+  const allocationId = randomUUID();
+  assert.equal(await service.assignQuota({ allocationId, deviceId, productId: id, quantity: 2 }, actor), 2);
+  assert.equal(await service.assignQuota({ allocationId, deviceId, productId: id, quantity: 2 }, actor), 2);
+  const initialPage = await service.bootstrap({ deviceId, after: id - 1, limit: 1 }, actor);
+  assert.equal(initialPage.user.id, administrator);
+  assert.equal(initialPage.products[0]?.id, id);
+  assert.equal(initialPage.products[0]?.offlineQuota, 2);
+  assert.equal(initialPage.products[0]?.confirmedStock, 3);
+  const secondDeviceId = randomUUID();
+  await connection!.pool.request().input('device', connection!.driver.UniqueIdentifier, secondDeviceId)
+    .input('tenant', connection!.driver.UniqueIdentifier, tenantId)
+    .input('key', connection!.driver.VarChar(512), 'test-public-key')
+    .query('INSERT INTO jm.dispositivo_registrado(device_id,tenant_id,public_key) VALUES (@device,@tenant,@key);');
+  await assert.rejects(service.assignQuota({ allocationId: randomUUID(), deviceId: secondDeviceId, productId: id, quantity: 2 }, actor),
+    { code: 'INSUFFICIENT_STOCK' });
+  await assert.rejects(connection!.pool.request().input('device', connection!.driver.UniqueIdentifier, randomUUID())
+    .input('product', connection!.driver.Int, id)
+    .query('INSERT INTO jm.cupo_dispositivo(device_id,producto_id,restante) VALUES (@device,@product,2);'));
+  await assert.rejects(facade.registrarSalida(command(id, 2), mechanic), { code: 'STOCK_CONFLICT' });
+  await facade.registrarSalida(command(id, 1), mechanic);
+  const operation = { operationId: randomUUID(), deviceId, kind: 'INVENTORY_MOVEMENT' as const,
+    payload: { productId: id, type: 'SALIDA' as const, quantity: 2, reason: 'Salida desconectada',
+      reference: null, idempotencyKey: randomUUID() } };
+  const first = await service.accept(operation, actor);
+  assert.equal(first.status, 'CONFIRMED');
+  assert.deepEqual(await service.accept(operation, actor), first);
+  await assert.rejects(service.accept({ ...operation, payload: { ...operation.payload, quantity: 1 } }, actor),
+    { code: 'IDEMPOTENCY_CONFLICT' });
+  assert.deepEqual(await balance(id), { cantidad: 0, movimientos: 2 });
+  const quota = await connection!.pool.request().input('device', connection!.driver.UniqueIdentifier, deviceId)
+    .input('product', connection!.driver.Int, id)
+    .query<{ restante: number }>('SELECT restante FROM jm.cupo_dispositivo WHERE device_id=@device AND producto_id=@product;');
+  assert.equal(quota.recordset[0]?.restante, 0);
+});
+
+test('ATAM: dos mecánicos intentan retirar 2 unidades de un stock de 3', async () => {
+  const id = await product(3);
+  const second = await connection!.pool.request()
+    .input('tenant', connection!.driver.UniqueIdentifier, tenantId)
+    .query<{ id: number }>(`INSERT INTO jm.usuario(entra_tenant_id, entra_object_id, nombres, rol, activo)
+      VALUES (@tenant, NEWID(), N'Segundo mecánico ficticio', 'MECANICO', 1);
+      SELECT CONVERT(int, SCOPE_IDENTITY()) AS id;`);
+  const secondMechanic = second.recordset[0]!.id;
   const results = await Promise.allSettled([
     facade.registrarSalida(command(id, 2), mechanic),
-    facade.registrarSalida(command(id, 2), mechanic),
+    facade.registrarSalida(command(id, 2), secondMechanic),
   ]);
   assert.equal(results.filter((item) => item.status === 'fulfilled').length, 1);
   const failure = results.find((item) => item.status === 'rejected');
   assert.equal(failure?.status === 'rejected' && failure.reason.code, 'INSUFFICIENT_STOCK');
   assert.deepEqual(await balance(id), { cantidad: 1, movimientos: 1 });
+  const movement = await connection!.pool.request().input('id', connection!.driver.Int, id)
+    .query<{ usuario_id: number }>('SELECT usuario_id FROM jm.movimiento WHERE producto_id = @id;');
+  assert.ok([mechanic, secondMechanic].includes(movement.recordset[0]!.usuario_id));
 });
 
 test('SQL: dos salidas válidas concurrentes tienen saldos encadenados', async () => {
@@ -208,6 +268,58 @@ async function tokenFor(userId: number, role: string) {
     .query<{ objectId: string }>('SELECT CONVERT(varchar(36), entra_object_id) AS objectId FROM jm.usuario WHERE id = @id;');
   return signTestToken({ oid: result.recordset[0]!.objectId, roles: [role] });
 }
+
+test('HTTP+SQL: equipo registrado exige posesión de clave para descarga y bloquea sustitución de clave', async () => {
+  const app = protectedApp();
+  const token = await tokenFor(administrator, 'Administrador');
+  const deviceId = randomUUID();
+  const pair = generateKeyPairSync('ec', { namedCurve: 'prime256v1', publicKeyEncoding: { format: 'pem', type: 'spki' },
+    privateKeyEncoding: { format: 'pem', type: 'pkcs8' } });
+  const impostor = generateKeyPairSync('ec', { namedCurve: 'prime256v1', publicKeyEncoding: { format: 'pem', type: 'spki' },
+    privateKeyEncoding: { format: 'pem', type: 'pkcs8' } });
+  const registration = { deviceId, publicKey: pair.publicKey };
+  await request(app).post('/api/v1/sync/devices').auth(token, { type: 'bearer' })
+    .set(deviceProofHeaders(deviceId, pair.privateKey, 'POST', '/api/v1/sync/devices', registration))
+    .send(registration).expect(200);
+  await request(app).post('/api/v1/sync/devices').auth(token, { type: 'bearer' })
+    .set(deviceProofHeaders(deviceId, pair.privateKey, 'POST', '/api/v1/sync/devices', registration))
+    .send(registration).expect(200);
+  const replacement = { deviceId, publicKey: impostor.publicKey };
+  await request(app).post('/api/v1/sync/devices').auth(token, { type: 'bearer' })
+    .set(deviceProofHeaders(deviceId, impostor.privateKey, 'POST', '/api/v1/sync/devices', replacement))
+    .send(replacement).expect(403);
+  const path = `/api/v1/sync/bootstrap?deviceId=${deviceId}&after=0&limit=1`;
+  await request(app).get(path).auth(token, { type: 'bearer' }).expect(403);
+  await request(app).get(path).auth(token, { type: 'bearer' })
+    .set(deviceProofHeaders(deviceId, impostor.privateKey, 'GET', path)).expect(403);
+  await request(app).get(path).auth(token, { type: 'bearer' })
+    .set(deviceProofHeaders(deviceId, pair.privateKey, 'GET', path)).expect(200);
+  const productId = await product(3);
+  await request(app).post('/api/v1/sync/quotas').auth(token, { type: 'bearer' })
+    .send({ allocationId: randomUUID(), deviceId, productId, quantity: 2 }).expect(201);
+  const listed = await request(app).get('/api/v1/sync/devices').auth(token, { type: 'bearer' }).expect(200);
+  assert.equal(listed.body.data.find((item: { deviceId: string }) => item.deviceId.toLowerCase() === deviceId)?.quotaRemaining, '2');
+  const revoked = await request(app).post(`/api/v1/sync/devices/${deviceId}/revoke`)
+    .auth(token, { type: 'bearer' }).send({ reason: 'Equipo extraviado durante el inventario' }).expect(200);
+  assert.equal(revoked.body.data.quotaRemaining, '2');
+  await request(app).post(`/api/v1/sync/devices/${deviceId}/revoke`)
+    .auth(token, { type: 'bearer' }).send({ reason: 'Segunda consulta de revocación' }).expect(200);
+  const mechanicToken = await tokenFor(mechanic, 'Mecanico');
+  await request(app).get('/api/v1/sync/devices').auth(mechanicToken, { type: 'bearer' }).expect(403);
+  await request(app).post(`/api/v1/sync/devices/${deviceId}/revoke`)
+    .auth(mechanicToken, { type: 'bearer' }).send({ reason: 'No autorizado para revocar' }).expect(403);
+  await request(app).get(path).auth(token, { type: 'bearer' })
+    .set(deviceProofHeaders(deviceId, pair.privateKey, 'GET', path)).expect(403);
+  await request(app).post('/api/v1/sync/devices').auth(token, { type: 'bearer' })
+    .set(deviceProofHeaders(deviceId, pair.privateKey, 'POST', '/api/v1/sync/devices', registration))
+    .send(registration).expect(403);
+  await request(app).post('/api/v1/sync/quotas').auth(token, { type: 'bearer' })
+    .send({ allocationId: randomUUID(), deviceId, productId, quantity: 1 }).expect(403);
+  const held = await connection!.pool.request().input('device', connection!.driver.UniqueIdentifier, deviceId)
+    .input('product', connection!.driver.Int, productId)
+    .query<{ restante: number }>('SELECT restante FROM jm.cupo_dispositivo WHERE device_id=@device AND producto_id=@product;');
+  assert.equal(held.recordset[0]?.restante, 2);
+});
 
 test('HTTP+SQL: movimiento autorizado y auditoría se guardan con identidad y requestId', async () => {
   const id = await product();
