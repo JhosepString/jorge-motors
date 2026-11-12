@@ -7,6 +7,9 @@ test('Lecturas: filtros acotados y sin usuario/precio/campos arbitrarios', () =>
   assert.equal(stockQuerySchema.parse({}).limite, 25);
   for (const input of [{ usuarioId: 1 }, { precioCompra: true }, { limite: 101 }, { buscar: 'x'.repeat(101) }, { estado: 'INACTIVO' }]) assert.equal(stockQuerySchema.safeParse(input).success, false);
   assert.equal(movementQuerySchema.safeParse({ usuarioId: 1 }).success, false);
+  assert.equal(movementQuerySchema.safeParse({ fechaDesde: '2026-11-12' }).success, false);
+  assert.equal(movementQuerySchema.safeParse({ fechaDesde: '2026-11-13T00:00:00.000Z', fechaHasta: '2026-11-12T00:00:00.000Z' }).success, false);
+  assert.equal(movementQuerySchema.safeParse({ fechaDesde: '2026-11-12T05:00:00.000Z', fechaHasta: '2026-11-13T05:00:00.000Z' }).success, true);
 });
 test('Lecturas: Mecánico se limita por identidad, Administrador no; el perfil se revalida', async () => {
   let role: UsuarioInventario['rol'] = 'MECANICO'; let active = true; const scopes: (number | null)[] = [];

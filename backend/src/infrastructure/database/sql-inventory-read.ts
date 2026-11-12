@@ -23,11 +23,15 @@ export class SqlInventoryReadUnitOfWork implements ReadUnitOfWork {
         async movimientos(f, ownUser) {
           return (await tx.request().input('after', d.Int, f.despuesDe).input('limit', d.Int, f.limite + 1)
             .input('product', d.Int, f.productoId ?? null).input('own', d.Int, ownUser)
+            .input('from', d.DateTime2, f.fechaDesde ?? null).input('until', d.DateTime2, f.fechaHasta ?? null)
             .query<MovementView>(`SELECT TOP (@limit) CONVERT(int,m.id) AS id,m.producto_id AS productoId,p.sku,p.nombre,
               m.usuario_id AS usuarioId,m.tipo,m.cantidad,m.stock_anterior AS stockAnterior,m.stock_resultante AS stockResultante,
               m.motivo,m.referencia,m.fecha FROM jm.movimiento m JOIN jm.producto p ON p.id=m.producto_id
-              WHERE m.id>@after AND (@product IS NULL OR m.producto_id=@product) AND (@own IS NULL OR m.usuario_id=@own)
-              ORDER BY m.id;`)).recordset;
+              WHERE (@after=0 OR m.fecha<(SELECT fecha FROM jm.movimiento WHERE id=@after)
+                OR (m.fecha=(SELECT fecha FROM jm.movimiento WHERE id=@after) AND m.id<@after))
+                AND (@product IS NULL OR m.producto_id=@product) AND (@own IS NULL OR m.usuario_id=@own)
+                AND (@from IS NULL OR m.fecha>=@from) AND (@until IS NULL OR m.fecha<@until)
+              ORDER BY m.fecha DESC,m.id DESC;`)).recordset;
         },
         async categorias(after, limit) {
           return (await tx.request().input('after', d.Int, after).input('limit', d.Int, limit)

@@ -238,6 +238,26 @@ test('Administrador registra perfil y muestra los pasos de Entra', async ({ page
   await expect(page.getByText('Perfil registrado.')).toBeVisible();
   expect(calls.some((call) => call.path === '/auth/users' && call.method === 'POST')).toBe(true);
 });
+test('Historial: fecha única o rango se envía al servidor y reinicia la paginación', async ({ page }) => {
+  const calls = await fixture(page);
+  await page.getByRole('link', { name: 'Movimientos', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Historial de movimientos' })).toBeVisible();
+  await page.getByLabel('Desde').fill('2026-11-10');
+  await page.getByLabel('Hasta').fill('2026-11-12');
+  await page.getByRole('button', { name: 'Aplicar fechas' }).click();
+  await expect.poll(() => calls.filter((call) => call.path === '/inventario/movimientos').length).toBe(2);
+  const query = new URLSearchParams(calls.at(-1)!.query);
+  expect(query.get('despuesDe')).toBe('0');
+  expect(query.get('fechaDesde')).toBe(new Date('2026-11-10T00:00:00').toISOString());
+  const exclusiveEnd = new Date('2026-11-12T00:00:00');
+  exclusiveEnd.setDate(exclusiveEnd.getDate() + 1);
+  expect(query.get('fechaHasta')).toBe(exclusiveEnd.toISOString());
+  await page.getByLabel('Hasta').fill('2026-11-09');
+  await expect(page.getByRole('button', { name: 'Aplicar fechas' })).toBeDisabled();
+  await page.getByRole('button', { name: 'Limpiar fechas' }).click();
+  await expect.poll(() => calls.filter((call) => call.path === '/inventario/movimientos').length).toBe(3);
+  expect(new URLSearchParams(calls.at(-1)!.query).has('fechaDesde')).toBe(false);
+});
 test('Administrador: navegación, inventario, formulario versionado y error 412 visible', async ({ page }) => {
   const calls = await fixture(page, 'ADMINISTRADOR', { staleProduct: true });
   await page.getByRole('link', { name: 'Inventario', exact: true }).click();

@@ -181,6 +181,20 @@ test('Lecturas SQL: historial propio impuesto en servidor y sin claves internas,
   assert.equal(own.body.data.length, 1); assert.equal(own.body.data[0].usuarioId, mechanic);
   assert.equal('claveIdempotencia' in own.body.data[0], false); assert.equal('requestHash' in own.body.data[0], false);
   const all = await request(app).get(path).set(auth()).expect(200); assert.equal(all.body.data.length, 2);
+  assert.ok(all.body.data[0].id > all.body.data[1].id, 'La entrada más reciente debe aparecer primero');
+  const firstPage = await request(app).get(path + '&limite=1').set(auth()).expect(200);
+  const secondPage = await request(app).get(path + `&limite=1&despuesDe=${firstPage.body.siguiente}`).set(auth()).expect(200);
+  assert.equal(firstPage.body.data[0].id, all.body.data[0].id);
+  assert.equal(secondPage.body.data[0].id, all.body.data[1].id);
+  const future = encodeURIComponent('2099-01-01T00:00:00.000Z');
+  assert.equal((await request(app).get(path + `&fechaDesde=${future}`).set(auth()).expect(200)).body.data.length, 0);
+  const latestAt = new Date(all.body.data[0].fecha).getTime();
+  const included = await request(app).get(path + `&fechaDesde=${encodeURIComponent(new Date(latestAt).toISOString())}`
+    + `&fechaHasta=${encodeURIComponent(new Date(latestAt + 1).toISOString())}`).set(auth()).expect(200);
+  assert.ok(included.body.data.some((movement: { id: number }) => movement.id === all.body.data[0].id));
+  const excluded = await request(app).get(path + `&fechaHasta=${encodeURIComponent(new Date(latestAt).toISOString())}`).set(auth()).expect(200);
+  assert.ok(excluded.body.data.every((movement: { id: number }) => movement.id !== all.body.data[0].id));
+  await request(app).get(path + `&fechaDesde=${future}&fechaHasta=${encodeURIComponent('2000-01-01T00:00:00.000Z')}`).set(auth()).expect(400);
   await request(app).get(path + `&usuarioId=${administrator}`).auth(mechanicToken, { type: 'bearer' }).expect(400);
   const audit = await connection.pool.request().input('rid', connection.driver.UniqueIdentifier, own.headers['x-request-id'])
     .query<{ accion: string }>('SELECT accion FROM jm.auditoria WHERE request_id=@rid;');

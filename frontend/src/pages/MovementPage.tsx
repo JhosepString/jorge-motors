@@ -285,9 +285,23 @@ export function MovementPage({ api, profile }: { api: ApiClient; profile: Profil
 }
 export function HistoryPage({ api, profile }: { api: ApiClient; profile: Profile }) {
   const [after, setAfter] = useState(0);
+  const [fromDraft, setFromDraft] = useState('');
+  const [untilDraft, setUntilDraft] = useState('');
+  const [from, setFrom] = useState('');
+  const [until, setUntil] = useState('');
+  const invalidRange = !!fromDraft && !!untilDraft && fromDraft > untilDraft;
   const list = useLoad(
-    () => api.json<Page<Movement>>(`/inventario/movimientos?despuesDe=${after}`),
-    [api, after],
+    () => {
+      const query = new URLSearchParams({ despuesDe: String(after) });
+      if (from) query.set('fechaDesde', new Date(`${from}T00:00:00`).toISOString());
+      if (until) {
+        const nextDay = new Date(`${until}T00:00:00`);
+        nextDay.setDate(nextDay.getDate() + 1);
+        query.set('fechaHasta', nextDay.toISOString());
+      }
+      return api.json<Page<Movement>>(`/inventario/movimientos?${query}`);
+    },
+    [api, after, from, until],
   );
   return (
     <>
@@ -296,7 +310,7 @@ export function HistoryPage({ api, profile }: { api: ApiClient; profile: Profile
         subtitle={
           profile.rol === 'MECANICO'
             ? 'El servidor limita esta consulta a los movimientos de tu usuario.'
-            : 'Historial inmutable de entradas y salidas, por orden de registro.'
+            : 'Historial inmutable de entradas y salidas, del más reciente al más antiguo.'
         }
       />
       <section className="panel table-panel">
@@ -306,6 +320,27 @@ export function HistoryPage({ api, profile }: { api: ApiClient; profile: Profile
             Actualizar
           </button>
         </div>
+        <form className="filters" onSubmit={(event) => {
+          event.preventDefault();
+          if (invalidRange) return;
+          setAfter(0);
+          setFrom(fromDraft);
+          setUntil(untilDraft);
+          if (from === fromDraft && until === untilDraft) list.reload();
+        }}>
+          <label>Desde
+            <input type="date" value={fromDraft} onChange={(event) => setFromDraft(event.target.value)} />
+          </label>
+          <label>Hasta
+            <input type="date" value={untilDraft} onChange={(event) => setUntilDraft(event.target.value)} />
+          </label>
+          <button className="secondary" disabled={invalidRange}>Aplicar fechas</button>
+          <button type="button" className="text-button" disabled={!fromDraft && !untilDraft && !from && !until}
+            onClick={() => { setFromDraft(''); setUntilDraft(''); setFrom(''); setUntil(''); setAfter(0); }}>
+            Limpiar fechas
+          </button>
+        </form>
+        {invalidRange && <Notice danger>La fecha «Desde» no puede ser posterior a «Hasta».</Notice>}
         {list.loading && <Loading />}
         {list.error && <Notice danger>{list.error}</Notice>}
         {list.data && (
