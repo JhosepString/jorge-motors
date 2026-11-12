@@ -84,8 +84,14 @@ async function fixture(
     if (path === '/auth/users') {
       if (req.method() === 'POST') return send({ data: { id: 3, ...req.postDataJSON() } }, 201);
       return send({ data: [{ id: 1, objectId: '11111111-1111-4111-8111-111111111111',
-        nombres: 'Administrador Demo', rol: 'ADMINISTRADOR', activo: true }] });
+        nombres: 'Administrador Demo', rol: 'ADMINISTRADOR', activo: true },
+      { id: 2, objectId: '22222222-2222-4222-8222-222222222222',
+        nombres: 'Mecánico Demo', rol: 'MECANICO', activo: true }] });
     }
+    if (path === '/sync/devices') return send({ data: [{ deviceId: '33333333-3333-4333-8333-333333333333',
+      active: true, createdAt: '2026-11-12T00:00:00Z', revokedAt: null,
+      quotaRemaining: '0', productsWithQuota: 0 }] });
+    if (path === '/sync/quotas' && req.method() === 'POST') return send({ data: { remaining: 3 } }, 201);
     if (path === '/inventario/stock')
       return send({
         data: stock.filter((p) =>
@@ -238,6 +244,19 @@ test('Administrador registra perfil y muestra los pasos de Entra', async ({ page
   await expect(page.getByText('Perfil registrado.')).toBeVisible();
   expect(calls.some((call) => call.path === '/auth/users' && call.method === 'POST')).toBe(true);
 });
+test('Equipos: el administrador asigna cupo de producto a un mecánico concreto', async ({ page }) => {
+  const calls = await fixture(page);
+  await page.getByRole('link', { name: 'Equipos' }).click();
+  await page.getByRole('button', { name: 'Asignar cupo local' }).click();
+  await page.getByLabel('Destino del cupo').selectOption('2');
+  await page.getByLabel('Buscar producto').fill('DEMO-FIL-001');
+  await page.getByRole('combobox', { name: 'Producto', exact: true }).selectOption('1');
+  await page.getByLabel('Unidades a reservar').fill('3');
+  await page.getByRole('button', { name: 'Confirmar cupo' }).click();
+  await expect(page.getByText(/Cupo asignado/)).toBeVisible();
+  const sent = calls.find((call) => call.path === '/sync/quotas' && call.method === 'POST');
+  expect(sent?.body).toMatchObject({ userId: 2, productId: 1, quantity: 3 });
+});
 test('Historial: fecha única o rango se envía al servidor y reinicia la paginación', async ({ page }) => {
   const calls = await fixture(page);
   await page.getByRole('link', { name: 'Movimientos', exact: true }).click();
@@ -257,6 +276,50 @@ test('Historial: fecha única o rango se envía al servidor y reinicia la pagina
   await page.getByRole('button', { name: 'Limpiar fechas' }).click();
   await expect.poll(() => calls.filter((call) => call.path === '/inventario/movimientos').length).toBe(3);
   expect(new URLSearchParams(calls.at(-1)!.query).has('fechaDesde')).toBe(false);
+});
+test('Modo local: explica por qué una salida sin cupo está bloqueada y permite entradas', async ({ page }) => {
+  await page.addInitScript(() => {
+    (window as unknown as { jorgeDesktop: unknown }).jorgeDesktop = {
+      state: async () => ({ configured: true, signedIn: true, offlineAuthorized: true,
+        offlineProfile: { id: 1, nombres: 'Administrador Demo', rol: 'ADMINISTRADOR' }, apiBaseUrl: null }),
+      localStatus: async () => ({ ready: true, online: false, pending: 0,
+        profile: { id: 1, nombres: 'Administrador Demo', rol: 'ADMINISTRADOR' } }),
+      localInventory: async () => [{ id: 1, sku: 'SIM-FIL-001', name: 'Filtro',
+        confirmedStock: 4, offlineQuota: 0, stockMinimum: 1 }],
+      localOperations: async () => [],
+      localMove: async () => { throw new Error('No debe registrar la salida sin cupo.'); },
+    };
+  });
+  await fixture(page);
+  await page.getByRole('link', { name: 'Modo local' }).click();
+  await page.getByLabel('Buscar repuesto por SKU o nombre').fill('SIM-FIL');
+  await page.getByRole('button', { name: 'Filtro' }).click();
+  await expect(page.getByRole('alert')).toContainText('0 unidades de cupo');
+  await expect(page.getByRole('button', { name: 'Guardar en este equipo' })).toBeDisabled();
+  await page.getByLabel('Tipo').selectOption('ENTRADA');
+  await expect(page.getByRole('button', { name: 'Guardar en este equipo' })).toBeEnabled();
+});
+test('Modo local: mecánico no supera 20 salidas pendientes del mismo producto', async ({ page }) => {
+  await page.addInitScript(() => {
+    (window as unknown as { jorgeDesktop: unknown }).jorgeDesktop = {
+      state: async () => ({ configured: true, signedIn: true, offlineAuthorized: true,
+        offlineProfile: { id: 2, nombres: 'Mecánico Demo', rol: 'MECANICO' }, apiBaseUrl: null }),
+      localStatus: async () => ({ ready: true, online: false, pending: 1,
+        profile: { id: 2, nombres: 'Mecánico Demo', rol: 'MECANICO' } }),
+      localInventory: async () => [{ id: 1, sku: 'SIM-FIL-001', name: 'Filtro',
+        confirmedStock: 40, offlineQuota: 30, stockMinimum: 1, unsettledExits: 19 }],
+      localOperations: async () => [],
+    };
+  });
+  await fixture(page, 'MECANICO');
+  await page.getByRole('link', { name: 'Modo local' }).click();
+  await page.getByLabel('Buscar repuesto por SKU o nombre').fill('SIM-FIL');
+  await page.getByRole('button', { name: 'Filtro' }).click();
+  await expect(page.getByText('te quedan 1 de 20 unidades')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Guardar en este equipo' })).toBeEnabled();
+  await page.getByLabel('Cantidad').fill('2');
+  await expect(page.getByRole('alert')).toContainText('Superas el máximo de 20');
+  await expect(page.getByRole('button', { name: 'Guardar en este equipo' })).toBeDisabled();
 });
 test('Administrador: navegación, inventario, formulario versionado y error 412 visible', async ({ page }) => {
   const calls = await fixture(page, 'ADMINISTRADOR', { staleProduct: true });

@@ -158,6 +158,48 @@ test('SQL: cupo reservado protege salidas online y se consume una sola vez al si
   assert.equal(quota.recordset[0]?.restante, 0);
 });
 
+test('SQL: un mecánico reparte 20 unidades por producto entre dos equipos y el administrador usa solo la reserva libre', async () => {
+  const id = await product(60);
+  const service = new SqlSyncService(connection!);
+  const devices = [randomUUID(), randomUUID()];
+  for (const deviceId of devices) await connection!.pool.request()
+    .input('device', connection!.driver.UniqueIdentifier, deviceId)
+    .input('tenant', connection!.driver.UniqueIdentifier, tenantId)
+    .input('key', connection!.driver.VarChar(512), 'test-public-key')
+    .query('INSERT INTO jm.dispositivo_registrado(device_id,tenant_id,public_key) VALUES (@device,@tenant,@key);');
+  const actors = await connection!.pool.request().input('admin', connection!.driver.Int, administrator)
+    .input('mechanic', connection!.driver.Int, mechanic)
+    .query<UserProfile>(`SELECT CONVERT(int,id) AS id,nombres,rol,activo,
+      CONVERT(varchar(36),entra_tenant_id) AS entraTenantId,
+      CONVERT(varchar(36),entra_object_id) AS entraObjectId FROM jm.usuario WHERE id IN (@admin,@mechanic);`);
+  const adminActor = actors.recordset.find((row) => row.id === administrator)!;
+  const mechanicActor = actors.recordset.find((row) => row.id === mechanic)!;
+  assert.equal(await service.assignQuota({ allocationId: randomUUID(), deviceId: devices[0]!, productId: id,
+    quantity: 12, userId: mechanic }, adminActor), 12);
+  await assert.rejects(service.assignQuota({ allocationId: randomUUID(), deviceId: devices[1]!, productId: id,
+    quantity: 9, userId: mechanic }, adminActor), { code: 'OFFLINE_MECHANIC_LIMIT' });
+  assert.equal(await service.assignQuota({ allocationId: randomUUID(), deviceId: devices[1]!, productId: id,
+    quantity: 8, userId: mechanic }, adminActor), 8);
+  const page = (deviceId: string, actor: UserProfile) => service.bootstrap({ deviceId, after: id - 1, limit: 1 }, actor);
+  assert.equal((await page(devices[0]!, mechanicActor)).products[0]?.offlineQuota, 12);
+  assert.equal((await page(devices[1]!, mechanicActor)).products[0]?.offlineQuota, 8);
+  assert.equal((await page(devices[0]!, adminActor)).products[0]?.offlineQuota, 0);
+  assert.equal(await service.assignQuota({ allocationId: randomUUID(), deviceId: devices[0]!, productId: id,
+    quantity: 10 }, adminActor), 10);
+  assert.equal((await page(devices[0]!, adminActor)).products[0]?.offlineQuota, 10);
+  const operation = (deviceId: string, quantity: number) => ({ operationId: randomUUID(), deviceId,
+    kind: 'INVENTORY_MOVEMENT' as const, payload: { productId: id, type: 'SALIDA' as const,
+      quantity, reason: 'Salida local repartida', reference: null, idempotencyKey: randomUUID(), policyVersion: 2 as const } });
+  assert.equal((await service.accept(operation(devices[0]!, 5), mechanicActor)).status, 'CONFIRMED');
+  assert.equal((await page(devices[0]!, mechanicActor)).products[0]?.offlineQuota, 7);
+  assert.equal((await page(devices[0]!, adminActor)).products[0]?.offlineQuota, 10);
+  assert.equal(await service.assignQuota({ allocationId: randomUUID(), deviceId: devices[1]!, productId: id,
+    quantity: 5, userId: mechanic }, adminActor), 13);
+  assert.equal((await service.accept(operation(devices[0]!, 10), adminActor)).status, 'CONFIRMED');
+  assert.equal((await page(devices[0]!, adminActor)).products[0]?.offlineQuota, 0);
+  await assert.rejects(service.accept(operation(devices[0]!, 1), adminActor), { code: 'NO_OFFLINE_QUOTA' });
+});
+
 test('ATAM: dos mecánicos intentan retirar 2 unidades de un stock de 3', async () => {
   const id = await product(3);
   const second = await connection!.pool.request()

@@ -5,6 +5,7 @@ import { Empty, Loading, Notice, PageHeading, useLoad } from '../ui/components';
 
 interface Device { deviceId: string; active: boolean; createdAt: string; revokedAt: string | null;
   quotaRemaining: string; productsWithQuota: number }
+interface ManagedUser { id: number; nombres: string; rol: 'ADMINISTRADOR' | 'MECANICO'; activo: boolean }
 
 export function DevicesPage({ api }: { api: ApiClient }) {
   const list = useLoad(() => api.json<{ data: Device[] }>('/sync/devices'), [api]);
@@ -13,6 +14,7 @@ export function DevicesPage({ api }: { api: ApiClient }) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [quotaDevice, setQuotaDevice] = useState('');
+  const [quotaUserId, setQuotaUserId] = useState('');
   const [productSearch, setProductSearch] = useState('');
   const [productId, setProductId] = useState('');
   const [quantity, setQuantity] = useState('1');
@@ -21,6 +23,7 @@ export function DevicesPage({ api }: { api: ApiClient }) {
   const submittingQuota = useRef(false);
   const products = useLoad(() => api.json<Page<Stock>>('/inventario/stock?' +
     new URLSearchParams({ limite: '100', buscar: productSearch })), [api, productSearch]);
+  const users = useLoad(() => api.json<{ data: ManagedUser[] }>('/auth/users'), [api]);
   const chosenProduct = products.data?.data.find((product) => product.id === Number(productId));
   const units = Number(quantity);
   const validQuantity = /^[1-9][0-9]*$/.test(quantity) && units <= 2_147_483_647 &&
@@ -30,7 +33,8 @@ export function DevicesPage({ api }: { api: ApiClient }) {
     if (submittingQuota.current || !quotaDevice || !validQuantity) return;
     submittingQuota.current = true;
     setBusy(true); setMessage(''); setQuotaError('');
-    const draft = { deviceId: quotaDevice, productId: Number(productId), quantity: units };
+    const draft = { deviceId: quotaDevice, productId: Number(productId), quantity: units,
+      ...(quotaUserId ? { userId: Number(quotaUserId) } : {}) };
     const payload = JSON.stringify(draft);
     if (!allocation.current || allocation.current.payload !== payload)
       allocation.current = { payload, id: crypto.randomUUID() };
@@ -39,8 +43,8 @@ export function DevicesPage({ api }: { api: ApiClient }) {
         method: 'POST', body: JSON.stringify({ ...draft, allocationId: allocation.current.id }),
       });
       allocation.current = null;
-      setMessage(`Cupo asignado. Este equipo dispone de ${result.data.remaining} unidades de ese producto.`);
-      setQuotaDevice(''); setProductId(''); setQuantity('1');
+      setMessage(`Cupo asignado. ${quotaUserId ? 'Este mecánico' : 'Los administradores'} dispone${quotaUserId ? '' : 'n'} de ${result.data.remaining} unidades de ese producto en este equipo.`);
+      setQuotaDevice(''); setQuotaUserId(''); setProductId(''); setQuantity('1');
       list.reload();
     } catch (error) { setQuotaError(errorText(error)); }
     finally { submittingQuota.current = false; setBusy(false); }
@@ -70,7 +74,7 @@ export function DevicesPage({ api }: { api: ApiClient }) {
         <div><span className={`badge ${device.active ? 'good' : 'warning'}`}>{device.active ? 'Activo' : 'Revocado'}</span>
           <p>Cupo reservado: {device.quotaRemaining} unidades en {device.productsWithQuota} productos</p></div>
         {device.active && <div className="actions">
-          <button className="primary" onClick={() => { setQuotaDevice(device.deviceId); setSelected(''); setMessage(''); setQuotaError(''); }}>
+          <button className="primary" onClick={() => { setQuotaDevice(device.deviceId); setQuotaUserId(''); setSelected(''); setMessage(''); setQuotaError(''); }}>
             Asignar cupo local</button>
           <button className="secondary" onClick={() => { setSelected(device.deviceId); setQuotaDevice(''); setReason(''); setMessage(''); }}>
             Revocar equipo</button></div>}
@@ -78,7 +82,15 @@ export function DevicesPage({ api }: { api: ApiClient }) {
     </div>
     {quotaDevice && <form className="panel device-revoke" onSubmit={(event) => void assignQuota(event)}>
       <h2>Asignar cupo para salidas sin internet</h2><p>Equipo {quotaDevice}</p>
-      <p>El cupo se reserva del stock disponible. El equipo lo recibirá cuando vuelva a descargar sus datos.</p>
+      <p>Elija un mecánico o el cupo para administradores. Cada mecánico puede tener como máximo 20 unidades
+        reservadas de este producto entre todos sus equipos. Los administradores no tienen ese límite personal,
+        pero también requieren reserva por producto. El equipo recibirá el cupo cuando se conecte y actualice sus datos.</p>
+      <label>Destino del cupo<select value={quotaUserId} onChange={(event) => setQuotaUserId(event.target.value)}>
+        <option value="">Administradores de este equipo</option>
+        {users.data?.data.filter((user) => user.activo && user.rol === 'MECANICO').map((user) =>
+          <option key={user.id} value={user.id}>{user.nombres}</option>)}
+      </select></label>
+      {users.error && <Notice danger>No se pudo cargar la lista de mecánicos: {users.error}</Notice>}
       <label>Buscar producto<input value={productSearch} maxLength={100} placeholder="Nombre o SKU"
         onChange={(event) => { setProductSearch(event.target.value); setProductId(''); }} /></label>
       {products.loading && <Loading />}
@@ -94,7 +106,7 @@ export function DevicesPage({ api }: { api: ApiClient }) {
         value={quantity} onChange={(event) => setQuantity(event.target.value)} /></label>
       {quotaError && <Notice danger>{quotaError}</Notice>}
       <div className="actions"><button type="button" className="text-button" onClick={() => { setQuotaDevice(''); setQuotaError(''); allocation.current = null; }}>Cancelar</button>
-        <button className="primary" disabled={busy || !validQuantity}>{busy ? 'Asignando…' : 'Confirmar cupo'}</button></div>
+        <button className="primary" disabled={busy || !validQuantity || !!users.error || users.loading}>{busy ? 'Asignando…' : 'Confirmar cupo'}</button></div>
     </form>}
     {selected && <form className="panel device-revoke" onSubmit={(event) => void revoke(event)}>
       <h2>Revocar equipo</h2><p>{selected}</p>

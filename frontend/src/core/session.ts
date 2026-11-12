@@ -9,10 +9,10 @@ declare global {
       apiRequest(input: { path: string; method: string; headers: Record<string, string>;
         body?: string | Uint8Array }): Promise<{ status: number; headers: Record<string, string>; body: Uint8Array }>;
       signOut(): Promise<unknown>;
-      localStatus(): Promise<{ ready: boolean; profile: { id: number; nombres: string; rol: 'ADMINISTRADOR' | 'MECANICO' } | null;
+      localStatus(): Promise<{ ready: boolean; deviceId?: string | null; profile: { id: number; nombres: string; rol: 'ADMINISTRADOR' | 'MECANICO' } | null;
         online: boolean; pending: number }>;
       localInventory(): Promise<Array<{ id: number; sku: string; name: string; confirmedStock: number;
-        offlineQuota: number; stockMinimum: number }>>;
+        offlineQuota: number; stockMinimum: number; unsettledExits: number }>>;
       localOperations(): Promise<Array<{ operationId: string; status: 'PENDING' | 'REJECTED'; error: string | null;
         type: 'ENTRADA' | 'SALIDA'; quantity: number; reason: string; createdAt: string; sku: string; name: string }>>;
       localMove(input: { productId: number; type: 'SALIDA' | 'ENTRADA'; quantity: number; reason: string }): Promise<{ id: string }>;

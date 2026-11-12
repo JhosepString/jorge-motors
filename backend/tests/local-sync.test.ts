@@ -15,6 +15,7 @@ test('ambiguous network failure retries same operation; receipt persists atomica
     store.cacheCategory(1, 'Filtros');
     store.cacheProduct({ id: 1, categoryId: 1, sku: 'F-1', name: 'Filtro', active: true,
       stockMinimum: 0, confirmedStock: 5, offlineQuota: 2 });
+    store.cacheUserProductQuota(1, 1, 2);
     const movement = store.registerMovement({ productId: 1, userId: 1, type: 'SALIDA', quantity: 1,
       reason: 'Taller', idempotencyKey: '8f464e16-bda2-4f41-9f9e-e8dbfb34fc71' });
     let calls = 0; const sentIds: string[] = [];
@@ -48,12 +49,13 @@ test('server error leaves pending operation and quota untouched', async () => {
     store.cacheCategory(1, 'Filtros');
     store.cacheProduct({ id: 1, categoryId: 1, sku: 'F-1', name: 'Filtro', active: true,
       stockMinimum: 0, confirmedStock: 5, offlineQuota: 1 });
+    store.cacheUserProductQuota(1, 1, 1);
     store.registerMovement({ productId: 1, userId: 1, type: 'SALIDA', quantity: 1,
       reason: 'Taller', idempotencyKey: 'ac108d72-98b2-4991-b6d1-15304c3ee759' });
     const sync = new LocalSyncClient(store, 'https://example.azurewebsites.net/api/v1', async () => 'token',
       async () => new Response('{}', { status: 503 }));
     assert.equal((await sync.runOnce(1)).remaining, 1);
-    assert.equal((store.db.prepare('SELECT offline_quota FROM product WHERE id=1').get() as { offline_quota: number }).offline_quota, 0);
+    assert.equal((store.db.prepare('SELECT remaining FROM user_product_quota WHERE user_id=1 AND product_id=1').get() as { remaining: number }).remaining, 0);
     store.close();
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
@@ -66,6 +68,7 @@ test('explicit rejection is retained for review without restoring spent quota', 
     store.cacheCategory(1, 'Filtros');
     store.cacheProduct({ id: 1, categoryId: 1, sku: 'F-1', name: 'Filtro', active: true,
       stockMinimum: 0, confirmedStock: 5, offlineQuota: 1 });
+    store.cacheUserProductQuota(1, 1, 1);
     const movement = store.registerMovement({ productId: 1, userId: 1, type: 'SALIDA', quantity: 1,
       reason: 'Taller', idempotencyKey: '7fd11ca7-5ed9-46be-b850-cbbcb5ef5d4c' });
     const sync = new LocalSyncClient(store, 'https://example.azurewebsites.net/api/v1', async () => 'token',
@@ -73,7 +76,7 @@ test('explicit rejection is retained for review without restoring spent quota', 
         { status: 200 }));
     assert.deepEqual(await sync.runOnce(1), { confirmed: 0, rejected: 1, remaining: 0, stopped: false });
     assert.equal((store.db.prepare('SELECT error FROM sync_operation WHERE operation_id=?').get(movement.id) as { error: string }).error, 'ROLE_CHANGED');
-    assert.equal((store.db.prepare('SELECT offline_quota FROM product WHERE id=1').get() as { offline_quota: number }).offline_quota, 0);
+    assert.equal((store.db.prepare('SELECT remaining FROM user_product_quota WHERE user_id=1 AND product_id=1').get() as { remaining: number }).remaining, 0);
     store.close();
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
@@ -86,6 +89,7 @@ test('explicit device revocation stops sync without discarding local operation',
     store.cacheCategory(1, 'Filtros');
     store.cacheProduct({ id: 1, categoryId: 1, sku: 'F-1', name: 'Filtro', active: true,
       stockMinimum: 0, confirmedStock: 5, offlineQuota: 1 });
+    store.cacheUserProductQuota(1, 1, 1);
     store.registerMovement({ productId: 1, userId: 1, type: 'SALIDA', quantity: 1,
       reason: 'Taller', idempotencyKey: 'ac108d72-98b2-4991-b6d1-15304c3ee759' });
     const sync = new LocalSyncClient(store, 'https://example.azurewebsites.net/api/v1', async () => 'token',

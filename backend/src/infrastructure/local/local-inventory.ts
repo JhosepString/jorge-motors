@@ -48,6 +48,13 @@ CREATE TABLE local_audit (
   id TEXT PRIMARY KEY, user_id INTEGER NOT NULL, action TEXT NOT NULL,
   entity_id TEXT NOT NULL, created_at TEXT NOT NULL
 );
+` }, { version: 2, sql: `
+CREATE TABLE user_product_quota (
+  user_id INTEGER NOT NULL REFERENCES local_user(id),
+  product_id INTEGER NOT NULL REFERENCES product(id),
+  remaining INTEGER NOT NULL CHECK(remaining >= 0),
+  PRIMARY KEY(user_id,product_id)
+);
 ` }];
 
 export interface CachedUser { id: number; tenantId: string; objectId: string; name: string; role: 'ADMINISTRADOR' | 'MECANICO'; active: boolean }
@@ -55,6 +62,7 @@ export interface CachedProduct { id: number; categoryId: number; sku: string; na
 export interface LocalMovementInput { productId: number; userId: number; type: 'ENTRADA' | 'SALIDA'; quantity: number; reason: string; reference?: string; idempotencyKey: string }
 export interface LocalMovementResult { id: string; repeated: boolean; status: 'PENDING' | 'CONFIRMED' | 'REJECTED' }
 export interface PendingSyncOperation { operationId: string; deviceId: string; kind: string; payload: string }
+export const MECHANIC_OFFLINE_PRODUCT_LIMIT = 20;
 const bootstrapPageSchema = z.object({ deviceId: z.uuid(), user: z.object({ id: z.number().int().positive(),
   tenantId: z.uuid(), objectId: z.uuid(), name: z.string().min(1),
   role: z.enum(['ADMINISTRADOR', 'MECANICO']), active: z.boolean() }),
@@ -118,15 +126,18 @@ export class LocalInventoryStore {
   }
 
   cacheProduct(product: CachedProduct): void {
-    const pending = this.db.prepare(`SELECT 1 FROM local_movement
-      WHERE product_id=? AND type='SALIDA' AND status='PENDING' LIMIT 1`).get(product.id);
-    if (pending) throw new Error('Cannot replace product quota while local exits are pending.');
     this.db.prepare(`INSERT INTO product(id,category_id,sku,name,active,stock_minimum,confirmed_stock,offline_quota)
       VALUES (?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET category_id=excluded.category_id,
       sku=excluded.sku,name=excluded.name,active=excluded.active,stock_minimum=excluded.stock_minimum,
       confirmed_stock=excluded.confirmed_stock,offline_quota=excluded.offline_quota`).run(
       product.id, product.categoryId, product.sku, product.name, Number(product.active), product.stockMinimum,
       product.confirmedStock, product.offlineQuota);
+  }
+
+  cacheUserProductQuota(userId: number, productId: number, remaining: number): void {
+    if (!Number.isInteger(remaining) || remaining < 0) throw new Error('Invalid user quota.');
+    this.db.prepare(`INSERT INTO user_product_quota(user_id,product_id,remaining) VALUES (?,?,?)
+      ON CONFLICT(user_id,product_id) DO UPDATE SET remaining=excluded.remaining`).run(userId, productId, remaining);
   }
 
   bootstrapCursor(userId: number): number | null {
@@ -149,6 +160,7 @@ export class LocalInventoryStore {
       for (const item of parsed.products) {
         this.cacheCategory(item.categoryId, item.categoryName);
         this.cacheProduct(item);
+        this.cacheUserProductQuota(userId, item.id, item.offlineQuota);
       }
       this.db.prepare('INSERT INTO sync_state(key,value) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value')
         .run(`bootstrap:${userId}`, parsed.nextAfter === null ? 'complete' : String(parsed.nextAfter));
@@ -180,16 +192,12 @@ export class LocalInventoryStore {
       for (const item of parsed.products) {
         this.cacheCategory(item.categoryId, item.categoryName);
         const unsettled = this.db.prepare(`SELECT COALESCE(SUM(quantity),0) AS units FROM local_movement
-          WHERE product_id=? AND type='SALIDA' AND status IN ('PENDING','REJECTED')`)
-          .get(item.id) as { units: number };
+          WHERE user_id=? AND product_id=? AND type='SALIDA' AND status IN ('PENDING','REJECTED')`)
+          .get(userId, item.id) as { units: number };
         const quota = item.offlineQuota - unsettled.units;
         if (quota < 0) throw new Error('Cloud quota is lower than unsettled local exits.');
-        this.db.prepare(`INSERT INTO product(id,category_id,sku,name,active,stock_minimum,confirmed_stock,offline_quota)
-          VALUES (?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET category_id=excluded.category_id,
-          sku=excluded.sku,name=excluded.name,active=excluded.active,stock_minimum=excluded.stock_minimum,
-          confirmed_stock=excluded.confirmed_stock,offline_quota=excluded.offline_quota`).run(
-          item.id, item.categoryId, item.sku, item.name, Number(item.active), item.stockMinimum,
-          item.confirmedStock, quota);
+        this.cacheProduct(item);
+        this.cacheUserProductQuota(userId, item.id, quota);
       }
       this.db.prepare('INSERT INTO sync_state(key,value) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value')
         .run(`refresh:${userId}`, parsed.nextAfter === null ? 'complete' : String(parsed.nextAfter));
@@ -221,13 +229,24 @@ export class LocalInventoryStore {
       if (!user?.active) throw new InventoryError('USER_NOT_ACTIVE', 'Usuario local no habilitado.');
       if (input.type === 'ENTRADA' && user.role !== 'ADMINISTRADOR') throw new InventoryError('FORBIDDEN_MOVEMENT', 'Solo el administrador registra entradas.');
       if (input.type !== 'ENTRADA' && input.type !== 'SALIDA') throw new InventoryError('INVALID_MOVEMENT_TYPE', 'Tipo de movimiento inválido.');
-      const product = this.db.prepare('SELECT active,offline_quota,sku FROM product WHERE id=?').get(input.productId) as { active: number; offline_quota: number; sku: string } | undefined;
+      const product = this.db.prepare(`SELECT p.active,p.sku,COALESCE(q.remaining,0) AS offline_quota
+        FROM product p LEFT JOIN user_product_quota q ON q.product_id=p.id AND q.user_id=? WHERE p.id=?`)
+        .get(input.userId, input.productId) as { active: number; offline_quota: number; sku: string } | undefined;
       if (!product?.active) throw new InventoryError('PRODUCT_NOT_ACTIVE', 'Producto local no disponible.');
       if (input.type === 'SALIDA' && /^SIM-(HMA|HMO|DIA|ELEVA|TAL)-/.test(product.sku))
         throw new InventoryError('TOOL_LOAN_REQUIRED', 'Las herramientas requieren préstamo y devolución.');
       if (input.type === 'SALIDA') {
+        if (user.role === 'MECANICO') {
+          // Rechazadas también cuentan: la pieza física pudo haber salido del taller.
+          const prior = this.db.prepare(`SELECT COALESCE(SUM(quantity),0) AS units FROM local_movement
+            WHERE user_id=? AND product_id=? AND type='SALIDA' AND status IN ('PENDING','REJECTED')`)
+            .get(input.userId, input.productId) as { units: number };
+          if (prior.units + input.quantity > MECHANIC_OFFLINE_PRODUCT_LIMIT)
+            throw new InventoryError('OFFLINE_MECHANIC_LIMIT', 'El mecánico superaría el máximo de 20 unidades pendientes de este producto.');
+        }
         calcularStock(product.offline_quota, input.quantity, 'SALIDA');
-        this.db.prepare('UPDATE product SET offline_quota=offline_quota-? WHERE id=?').run(input.quantity, input.productId);
+        this.db.prepare('UPDATE user_product_quota SET remaining=remaining-? WHERE user_id=? AND product_id=?')
+          .run(input.quantity, input.userId, input.productId);
       }
       const id = randomUUID(); const createdAt = new Date().toISOString();
       this.db.prepare(`INSERT INTO local_movement(id,product_id,user_id,type,quantity,reason,reference,idempotency_key,request_hash,created_at,status)
@@ -236,7 +255,7 @@ export class LocalInventoryStore {
       this.db.prepare(`INSERT INTO sync_operation(operation_id,device_id,user_id,kind,payload,created_at,status)
         VALUES (?,?,?,?,?,?,'PENDING')`).run(id, this.deviceId, input.userId, 'INVENTORY_MOVEMENT', JSON.stringify({
         productId: input.productId, type: input.type, quantity: input.quantity, reason: input.reason,
-        reference, idempotencyKey: key,
+        reference, idempotencyKey: key, policyVersion: 2,
       }), createdAt);
       this.db.prepare('INSERT INTO local_audit(id,user_id,action,entity_id,created_at) VALUES (?,?,?,?,?)')
         .run(randomUUID(), input.userId, `INVENTORY_${input.type}`, id, createdAt);

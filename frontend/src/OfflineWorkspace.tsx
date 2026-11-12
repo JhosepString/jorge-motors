@@ -22,6 +22,11 @@ export function OfflineWorkspace({ onlineNavigation = false }: { onlineNavigatio
   const matches = query.length < 2 ? [] : products.filter((item) =>
     `${item.sku} ${item.name}`.toLocaleLowerCase().includes(query)).slice(0, 21);
   const selected = products.find((item) => item.id === productId);
+  const toolExit = type === 'SALIDA' && !!selected && /^SIM-(HMA|HMO|DIA|ELEVA|TAL)-/.test(selected.sku);
+  const insufficientQuota = type === 'SALIDA' && !!selected && !toolExit && quantity > selected.offlineQuota;
+  const mechanicRemaining = status?.profile?.rol === 'MECANICO' && selected
+    ? Math.max(0, 20 - selected.unsettledExits) : null;
+  const mechanicLimitExceeded = type === 'SALIDA' && mechanicRemaining !== null && quantity > mechanicRemaining;
 
   async function refresh() {
     const next = await desktop.localStatus();
@@ -35,13 +40,13 @@ export function OfflineWorkspace({ onlineNavigation = false }: { onlineNavigatio
     return () => window.clearInterval(timer);
   }, []);
   async function submit(event: FormEvent) {
-    event.preventDefault(); if (busy || !status?.ready) return;
+    event.preventDefault(); if (busy || !status?.ready || toolExit || insufficientQuota || mechanicLimitExceeded) return;
     setBusy(true); setMessage('');
     try {
       await desktop.localMove({ productId, type, quantity, reason });
       setReason(''); setMessage('Guardado en este equipo. Pendiente de sincronizar.');
       await refresh();
-    } catch { setMessage('No se guardó el movimiento. Revise el cupo; las herramientas requieren préstamo y devolución.'); }
+    } catch { setMessage('No se guardó el movimiento. Revise que el producto esté activo, el cupo y la cantidad; los datos siguen intactos.'); }
     finally { setBusy(false); }
   }
   async function synchronize() {
@@ -60,12 +65,14 @@ export function OfflineWorkspace({ onlineNavigation = false }: { onlineNavigatio
     </section>;
   return <section className="offline-page">
     <header><div><span className="eyebrow">JORGE MOTORS · MODO LOCAL · DATOS FICTICIOS</span><h1>Inventario de este equipo</h1>
-      <p>{status.profile?.nombres} · {status.pending} operaciones pendientes</p></div>
+      <p>{status.profile?.nombres} · {status.pending} operaciones pendientes</p>
+      {status.deviceId && <p>Identificador de este equipo: <code>{status.deviceId}</code></p>}</div>
       <div>{onlineNavigation && <Link to="/inventario">Vista en línea</Link>}
         {!status.online && <button disabled={busy} onClick={() => void desktop.signIn().then(() => window.location.reload())}>
           Conectar con Microsoft</button>}
         {status.online && <button disabled={busy} onClick={() => void synchronize()}>Sincronizar ahora</button>}</div></header>
-    <p>El stock total corresponde a la última descarga. Para salidas sin internet se utiliza el cupo asignado a este equipo.</p>
+    <p>El stock total corresponde a la última descarga. Para salidas sin internet se utiliza el cupo reservado para este equipo y producto.
+      Cada mecánico puede retirar hasta 20 unidades pendientes de cada producto; el administrador no tiene ese límite personal.</p>
     {operations.some((item) => item.status === 'REJECTED') &&
       <p role="alert">Hay {operations.filter((item) => item.status === 'REJECTED').length} operaciones rechazadas. Conserve este equipo y solicite conciliación al administrador; no las repita como movimientos nuevos.</p>}
     {message && <p role="status">{message}</p>}
@@ -84,15 +91,21 @@ export function OfflineWorkspace({ onlineNavigation = false }: { onlineNavigatio
     {matches.length > 20 && <p>Hay más coincidencias. Escribe más del SKU o del nombre.</p>}
     <form onSubmit={(event) => void submit(event)}><h2>Registrar movimiento local</h2>
       <p>Producto seleccionado: <strong>{selected ? `${selected.name} · ${selected.sku}` : 'ninguno'}</strong></p>
+      {selected && mechanicRemaining !== null && <p>De este producto, te quedan {mechanicRemaining} de 20 unidades para salidas locales pendientes.</p>}
       {status.profile?.rol === 'ADMINISTRADOR' && <label>Tipo<select value={type}
         onChange={(event) => setType(event.target.value as 'SALIDA' | 'ENTRADA')}>
         <option value="SALIDA">Salida</option><option value="ENTRADA">Entrada pendiente</option></select></label>}
       <label>Cantidad<input type="number" min="1" max="2147483647" required value={quantity}
         onChange={(event) => setQuantity(Number(event.target.value))} /></label>
       <label>Motivo<input maxLength={300} required value={reason} onChange={(event) => setReason(event.target.value)} /></label>
-      {selected && /^SIM-(HMA|HMO|DIA|ELEVA|TAL)-/.test(selected.sku) && type === 'SALIDA' &&
+      {toolExit &&
         <p role="alert">Esta herramienta requiere préstamo y devolución. La salida común está bloqueada.</p>}
-      <button disabled={busy || !productId || (type === 'SALIDA' && !!selected && /^SIM-(HMA|HMO|DIA|ELEVA|TAL)-/.test(selected.sku))}>{busy ? 'Guardando…' : 'Guardar en este equipo'}</button>
+      {insufficientQuota && <p role="alert">Este equipo dispone de {selected!.offlineQuota} unidades de cupo para {selected!.sku};
+        la salida solicitada es de {quantity}. Un administrador debe asignar cupo en «Equipos → Asignar cupo local».
+        Después, conecte con Microsoft y actualice los datos locales.</p>}
+      {mechanicLimitExceeded && <p role="alert">Superas el máximo de 20 unidades pendientes de este producto para un mecánico.
+        Sincroniza primero las salidas anteriores; las rechazadas requieren conciliación del administrador.</p>}
+      <button disabled={busy || !productId || toolExit || insufficientQuota || mechanicLimitExceeded}>{busy ? 'Guardando…' : 'Guardar en este equipo'}</button>
     </form>
     <section><h2>Operaciones por sincronizar o revisar</h2>
       {!operations.length && <p>No hay operaciones pendientes ni rechazadas.</p>}

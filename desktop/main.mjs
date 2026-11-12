@@ -95,14 +95,19 @@ if (process.argv.includes('--uninstall-review')) {
     const state = auth?.state();
     const actor = state?.offlineAuthorized ? state.offlineProfile : null;
     return { ready: !!actor && !!local && local.bootstrapCursor(actor.id) === null,
+      deviceId: local?.deviceId ?? null,
       profile: actor, online: !!state?.signedIn,
       pending: actor && local ? local.pendingCount(actor.id) : 0 };
   });
   ipcMain.handle('local:inventory', (event) => {
     if (!fromWindow(event)) throw new Error('Unauthorized window');
-    localActor();
+    const actor = localActor();
     return local.db.prepare(`SELECT id,sku,name,confirmed_stock AS confirmedStock,
-      offline_quota AS offlineQuota,stock_minimum AS stockMinimum FROM product WHERE active=1 ORDER BY name,id`).all();
+      COALESCE((SELECT q.remaining FROM user_product_quota q WHERE q.product_id=product.id AND q.user_id=?),0)
+        AS offlineQuota,stock_minimum AS stockMinimum,
+      (SELECT COALESCE(SUM(m.quantity),0) FROM local_movement m WHERE m.product_id=product.id
+        AND m.user_id=? AND m.type='SALIDA' AND m.status IN ('PENDING','REJECTED')) AS unsettledExits
+      FROM product WHERE active=1 ORDER BY name,id`).all(actor.id, actor.id);
   });
   ipcMain.handle('local:operations', (event) => {
     if (!fromWindow(event)) throw new Error('Unauthorized window');

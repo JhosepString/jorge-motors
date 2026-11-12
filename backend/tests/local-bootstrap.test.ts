@@ -28,7 +28,7 @@ test('bootstrap persists pages, resumes after failure and rejects a foreign devi
     let client = new LocalBootstrapClient(store, 'https://example.azurewebsites.net/api/v1', async () => 'token', fetchPage as typeof fetch);
     await assert.rejects(client.download(7), /Network lost/);
     assert.equal(store.bootstrapCursor(7), 1);
-    assert.equal((store.db.prepare('SELECT offline_quota FROM product WHERE id=1').get() as { offline_quota: number }).offline_quota, 2);
+    assert.equal((store.db.prepare('SELECT remaining FROM user_product_quota WHERE user_id=7 AND product_id=1').get() as { remaining: number }).remaining, 2);
     store.close();
     store = new LocalInventoryStore(path, deviceId);
     client = new LocalBootstrapClient(store, 'https://example.azurewebsites.net/api/v1', async () => 'token', fetchPage as typeof fetch);
@@ -63,14 +63,14 @@ test('refresh reconciles new quota without counting unsettled exits twice', () =
     store.applyBootstrapPage({ deviceId, user, products: [{ ...product, offlineQuota: 3 }], nextAfter: null }, 7, 0);
     const movement = store.registerMovement({ productId: 1, userId: 7, type: 'SALIDA', quantity: 1,
       reason: 'Taller', idempotencyKey: '7fd11ca7-5ed9-46be-b850-cbbcb5ef5d4c' });
-    assert.equal((store.db.prepare('SELECT offline_quota FROM product WHERE id=1').get() as { offline_quota: number }).offline_quota, 2);
+    assert.equal((store.db.prepare('SELECT remaining FROM user_product_quota WHERE user_id=7 AND product_id=1').get() as { remaining: number }).remaining, 2);
     store.beginRefresh(7);
     store.applyRefreshPage({ deviceId, user, products: [{ ...product, offlineQuota: 5, confirmedStock: 6 }], nextAfter: null }, 7, 0);
-    assert.equal((store.db.prepare('SELECT offline_quota FROM product WHERE id=1').get() as { offline_quota: number }).offline_quota, 4);
+    assert.equal((store.db.prepare('SELECT remaining FROM user_product_quota WHERE user_id=7 AND product_id=1').get() as { remaining: number }).remaining, 4);
     store.confirmOperation(movement.id, 42);
     store.beginRefresh(7);
     store.applyRefreshPage({ deviceId, user, products: [{ ...product, offlineQuota: 4, confirmedStock: 5 }], nextAfter: null }, 7, 0);
-    assert.equal((store.db.prepare('SELECT offline_quota FROM product WHERE id=1').get() as { offline_quota: number }).offline_quota, 4);
+    assert.equal((store.db.prepare('SELECT remaining FROM user_product_quota WHERE user_id=7 AND product_id=1').get() as { remaining: number }).remaining, 4);
     store.close();
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
@@ -86,7 +86,7 @@ test('refresh fails closed when cloud quota falls below a pending exit', () => {
     assert.throws(() => store.applyRefreshPage({ deviceId, user,
       products: [{ ...product, offlineQuota: 0 }], nextAfter: null }, 7, 0), /quota/);
     assert.equal(store.refreshCursor(7), 0);
-    assert.equal((store.db.prepare('SELECT offline_quota FROM product WHERE id=1').get() as { offline_quota: number }).offline_quota, 1);
+    assert.equal((store.db.prepare('SELECT remaining FROM user_product_quota WHERE user_id=7 AND product_id=1').get() as { remaining: number }).remaining, 1);
     store.close();
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
